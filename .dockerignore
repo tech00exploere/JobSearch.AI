@@ -1,0 +1,38 @@
+﻿# ── Root .dockerignore — used by Dockerfile.backend ───────────────────────────
+# Only the backend/ + ml/ (inference-only) subdirectories are needed.
+
+# Frontend — never needed in backend image
+frontend/
+frontend/node_modules/
+frontend/.next/
+
+# Python virtual environment
+backend/.venv/
+**/__pycache__/
+**/*.py[cod]
+
+# Secrets
+backend/.env
+**/.env.local
+
+# Dev/test artifacts
+backend/tests/
+backend/.pytest_cache/
+**/*.egg-info/
+**/*.log
+
+# ML training-only directories (not needed at inference time)
+ml/data/
+ml/training/
+ml/evaluation/
+ml/tokenizer/
+ml/data_generator.py
+ml/job_classifier.py
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/

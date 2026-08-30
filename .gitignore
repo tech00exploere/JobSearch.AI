@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+backend/.venv/
+.venv/
+venv/
+ENV/
+env/
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment Variables
+.env
+backend/.env
+
+# Local database fallbacks
+backend/app/data/applications_db.json
+backend/app/data/resume.pdf
+
+# pytest cache
+.pytest_cache/
+
+# ML training data and other weights
+ml/data/
+ml/checkpoints/*
+!ml/checkpoints/matcher_model.pt
+

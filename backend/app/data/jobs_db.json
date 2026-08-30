@@ -1,0 +1,422 @@
+[
+  {
+    "id": "job-101",
+    "title": "Software Engineer Intern (Full-Stack)",
+    "company": "NexusTech India",
+    "location": "Bengaluru / Remote",
+    "job_type": "Internship",
+    "salary_range": "₹35,000 - ₹50,000 / month",
+    "posted_date": "2026-08-28",
+    "description": "NexusTech is seeking a proactive Software Engineer Intern to build responsive frontend web interfaces and robust Node.js / FastAPI backend services. You will work on real-time messaging, API integration, and AI feature deployment.",
+    "required_skills": ["React.js", "Node.js", "JavaScript", "TypeScript", "REST APIs", "Git"],
+    "preferred_skills": ["Next.js", "FastAPI", "Python", "MongoDB", "WebSockets"],
+    "experience_required": "0-1 years",
+    "responsibilities": [
+      "Develop reusable UI components in React and Next.js.",
+      "Build and maintain RESTful API endpoints using Node.js/FastAPI.",
+      "Collaborate on real-time messaging features using WebSockets and Socket.IO.",
+      "Write clean code with automated unit tests and participate in code reviews."
+    ]
+  },
+  {
+    "id": "job-102",
+    "title": "AI / ML Full-Stack Engineer",
+    "company": "Kritrim Innovations",
+    "location": "Remote, India",
+    "job_type": "Full-Time",
+    "salary_range": "₹8,000,000 - ₹12,000,000 / year",
+    "posted_date": "2026-08-29",
+    "description": "We are looking for an AI Full-Stack Engineer to architect agentic workflows, RAG knowledge bases, and PyTorch model services integrated with Next.js web applications.",
+    "required_skills": ["Python", "FastAPI", "Next.js", "TypeScript", "PyTorch", "RAG", "LLM Integration"],
+    "preferred_skills": ["PostgreSQL", "pgvector", "Docker", "MongoDB", "LangChain/Agentic Workflows"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Design and deploy FastAPI AI microservices with RAG retrieval pipelines.",
+      "Integrate LLM APIs and function calling engines into production web apps.",
+      "Fine-tune PyTorch baseline models and evaluate inference performance.",
+      "Build high-performance TypeScript/Next.js frontend dashboards."
+    ]
+  },
+  {
+    "id": "job-103",
+    "title": "Junior Backend Developer (Python / Node)",
+    "company": "AgriTech Solutions",
+    "location": "Hyderabad / Hybrid",
+    "job_type": "Full-Time",
+    "salary_range": "₹6,000,000 - ₹9,000,000 / year",
+    "posted_date": "2026-08-25",
+    "description": "AgriTech Solutions is looking for a Junior Backend Developer to design scalable database schemas, implement REST APIs, and optimize query latency for microservices.",
+    "required_skills": ["Python", "FastAPI", "Node.js", "MongoDB", "SQL", "REST APIs"],
+    "preferred_skills": ["Docker", "Redis", "AWS", "Git"],
+    "experience_required": "0-1 years",
+    "responsibilities": [
+      "Design MongoDB models and PostgreSQL queries for core application services.",
+      "Develop secure REST endpoints with JWT authorization.",
+      "Build background queue tasks and manage Docker container deployments."
+    ]
+  },
+  {
+    "id": "job-104",
+    "title": "Frontend React / Next.js Developer",
+    "company": "Zephyr Cloud Systems",
+    "location": "Remote, India",
+    "job_type": "Full-Time",
+    "salary_range": "₹7,000,000 - ₹10,000,000 / year",
+    "posted_date": "2026-08-27",
+    "description": "Build high-performance, accessible, and dynamic web interfaces using React 18, Next.js 14, and Tailwind CSS.",
+    "required_skills": ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "Redux Toolkit", "HTML/CSS"],
+    "preferred_skills": ["GraphQL", "Jest", "Vercel", "Figma"],
+    "experience_required": "1-2 years",
+    "responsibilities": [
+      "Implement pixel-perfect UI layouts from Figma designs.",
+      "Optimize web vitals, bundle size, and server-side rendering performance.",
+      "Integrate REST and WebSocket APIs into state management flows."
+    ]
+  },
+  {
+    "id": "job-105",
+    "title": "Digital Marketing Executive",
+    "company": "BrandPulse Media",
+    "location": "Mumbai / Hybrid",
+    "job_type": "Full-Time",
+    "salary_range": "₹4,000,000 - ₹6,500,000 / year",
+    "posted_date": "2026-08-26",
+    "description": "BrandPulse Media is hiring a Digital Marketing Executive to plan and execute performance marketing campaigns across Google Ads, Meta, and LinkedIn. You will manage content calendars, track campaign KPIs, and grow brand presence.",
+    "required_skills": ["Google Ads", "Meta Ads", "SEO", "Content Marketing", "Analytics", "Copywriting"],
+    "preferred_skills": ["HubSpot", "Canva", "Email Marketing", "A/B Testing", "LinkedIn Ads"],
+    "experience_required": "1-2 years",
+    "responsibilities": [
+      "Plan and execute paid campaigns across Google, Meta, and LinkedIn.",
+      "Monitor KPIs including CTR, ROAS, CPA and generate weekly performance reports.",
+      "Write engaging ad copy and coordinate with the design team for creatives.",
+      "Manage SEO strategy and track keyword rankings via Google Search Console."
+    ]
+  },
+  {
+    "id": "job-106",
+    "title": "Financial Analyst (Fresher / Junior)",
+    "company": "Vertex Capital Partners",
+    "location": "Delhi / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹5,000,000 - ₹7,000,000 / year",
+    "posted_date": "2026-08-24",
+    "description": "Vertex Capital Partners is looking for a detail-oriented Financial Analyst to build financial models, prepare investment reports, and support portfolio valuation activities.",
+    "required_skills": ["Financial Modelling", "Excel", "Valuation", "Data Analysis", "PowerPoint"],
+    "preferred_skills": ["Python", "SQL", "Bloomberg Terminal", "Power BI", "DCF Analysis"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Build and maintain DCF and comparable company financial models.",
+      "Prepare weekly portfolio performance reports and investment memos.",
+      "Conduct industry and competitor research to support deal sourcing.",
+      "Work with SQL and Excel to clean and analyze financial datasets."
+    ]
+  },
+  {
+    "id": "job-107",
+    "title": "UX / Product Designer",
+    "company": "Mosaic Design Studio",
+    "location": "Bengaluru / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹6,000,000 - ₹9,000,000 / year",
+    "posted_date": "2026-08-30",
+    "description": "Mosaic Design Studio is looking for a UX/Product Designer to lead end-to-end design of digital products — from discovery research to high-fidelity prototypes and developer handoff.",
+    "required_skills": ["Figma", "User Research", "Wireframing", "Prototyping", "Design Systems", "Usability Testing"],
+    "preferred_skills": ["Framer", "Motion Design", "HTML/CSS basics", "Notion", "Maze"],
+    "experience_required": "1-3 years",
+    "responsibilities": [
+      "Conduct user interviews and synthesize insights into design decisions.",
+      "Create low-fidelity wireframes and high-fidelity interactive prototypes in Figma.",
+      "Maintain and evolve the product design system.",
+      "Collaborate closely with engineers to ensure pixel-accurate implementation."
+    ]
+  },
+  {
+    "id": "job-108",
+    "title": "Content Writer & Strategist",
+    "company": "Inkwell Publishing",
+    "location": "Remote, India",
+    "job_type": "Full-Time",
+    "salary_range": "₹3,500,000 - ₹5,500,000 / year",
+    "posted_date": "2026-08-23",
+    "description": "Inkwell Publishing needs a creative Content Writer who can produce long-form articles, SEO blog posts, social media copy, and email newsletters that drive engagement and organic traffic.",
+    "required_skills": ["Content Writing", "SEO Writing", "Research", "Copywriting", "Grammar & Editing"],
+    "preferred_skills": ["WordPress", "Ahrefs", "Grammarly", "Email Newsletters", "Social Media"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Write 4–6 SEO-optimized blog posts per week on assigned topics.",
+      "Research keywords using Ahrefs and integrate them naturally into content.",
+      "Write email newsletter copy and A/B test subject lines.",
+      "Edit and proofread content from junior writers before publication."
+    ]
+  },
+  {
+    "id": "job-109",
+    "title": "Human Resources (HR) Executive",
+    "company": "PeopleFirst Consulting",
+    "location": "Pune / Hybrid",
+    "job_type": "Full-Time",
+    "salary_range": "₹3,500,000 - ₹5,000,000 / year",
+    "posted_date": "2026-08-22",
+    "description": "PeopleFirst Consulting is seeking an HR Executive to manage end-to-end recruitment, onboarding, employee engagement, and HRMS operations for our growing client base.",
+    "required_skills": ["Recruitment", "Onboarding", "HR Policies", "Communication", "MS Office"],
+    "preferred_skills": ["HRMS Software", "LinkedIn Recruiter", "Employee Engagement", "Payroll basics", "Labor Law"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Source, screen, and shortlist candidates for client job requisitions.",
+      "Coordinate interviews between hiring managers and candidates.",
+      "Manage new employee onboarding and documentation.",
+      "Maintain HR records and generate monthly headcount and attrition reports."
+    ]
+  },
+  {
+    "id": "job-110",
+    "title": "Sales Development Representative (SDR)",
+    "company": "GrowthLeap SaaS",
+    "location": "Bengaluru / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹4,000,000 - ₹7,000,000 / year (+ incentives)",
+    "posted_date": "2026-08-28",
+    "description": "GrowthLeap SaaS is looking for a driven Sales Development Representative to generate pipeline through outbound prospecting, qualify inbound leads, and book demos for the Account Executive team.",
+    "required_skills": ["Cold Outreach", "Lead Qualification", "CRM (Salesforce/HubSpot)", "Communication", "Follow-up"],
+    "preferred_skills": ["LinkedIn Sales Navigator", "Email Sequences", "B2B SaaS", "Objection Handling", "Product Demo"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Research and identify target accounts using LinkedIn and intent data tools.",
+      "Execute high-volume outbound sequences via email, phone, and LinkedIn.",
+      "Qualify inbound leads and book discovery calls for Account Executives.",
+      "Maintain CRM hygiene and log all activities in Salesforce or HubSpot."
+    ]
+  },
+  {
+    "id": "job-111",
+    "title": "Business Development Executive",
+    "company": "Scalepath Ventures",
+    "location": "Mumbai / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹5,000,000 - ₹8,000,000 / year (+ commission)",
+    "posted_date": "2026-08-29",
+    "description": "Scalepath Ventures is looking for a Business Development Executive to identify new market opportunities, build strategic partnerships, and expand the company's client portfolio across B2B segments.",
+    "required_skills": ["Business Development", "Lead Generation", "Client Relationship Management", "Negotiation", "Market Research"],
+    "preferred_skills": ["CRM (Salesforce/HubSpot)", "LinkedIn Sales Navigator", "Proposal Writing", "B2B Sales", "Networking"],
+    "experience_required": "1-3 years",
+    "responsibilities": [
+      "Identify and qualify new business opportunities through research and outreach.",
+      "Build and maintain long-term relationships with clients and partners.",
+      "Prepare business proposals, pitch decks, and contract negotiations.",
+      "Collaborate with marketing to align lead generation strategies."
+    ]
+  },
+  {
+    "id": "job-112",
+    "title": "Account Manager – B2B Sales",
+    "company": "CoreLink Solutions",
+    "location": "Delhi / Hybrid",
+    "job_type": "Full-Time",
+    "salary_range": "₹6,000,000 - ₹10,000,000 / year (+ incentives)",
+    "posted_date": "2026-08-27",
+    "description": "CoreLink Solutions needs an Account Manager to own a portfolio of enterprise B2B clients, drive upsells, ensure renewals, and act as the main point of contact between clients and internal teams.",
+    "required_skills": ["Account Management", "Upselling", "Client Retention", "Communication", "CRM Tools"],
+    "preferred_skills": ["Salesforce", "Contract Negotiation", "SaaS", "QBR Presentations", "Revenue Forecasting"],
+    "experience_required": "2-4 years",
+    "responsibilities": [
+      "Own a portfolio of 30–50 enterprise accounts and hit quarterly revenue targets.",
+      "Conduct quarterly business reviews (QBRs) with key stakeholders.",
+      "Identify upsell and cross-sell opportunities within existing accounts.",
+      "Coordinate with product and support teams to resolve client escalations."
+    ]
+  },
+  {
+    "id": "job-113",
+    "title": "Inside Sales Representative",
+    "company": "FinEdge Technologies",
+    "location": "Bengaluru / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹4,000,000 - ₹6,500,000 / year (+ variable)",
+    "posted_date": "2026-08-28",
+    "description": "FinEdge Technologies is hiring an Inside Sales Representative to handle inbound leads, run product demos, close deals, and meet monthly revenue quotas.",
+    "required_skills": ["Inside Sales", "Product Demos", "Objection Handling", "Closing", "CRM"],
+    "preferred_skills": ["Zoho CRM", "Email Outreach", "Cold Calling", "SaaS Sales", "Pipeline Management"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Handle and qualify inbound leads from the marketing funnel.",
+      "Schedule and deliver tailored product demos to prospects.",
+      "Negotiate pricing, manage objections, and close deals within the sales cycle.",
+      "Maintain accurate pipeline data in CRM and report weekly forecasts."
+    ]
+  },
+  {
+    "id": "job-114",
+    "title": "Partnership & Alliances Manager",
+    "company": "NovaSpark Ecosystems",
+    "location": "Remote, India",
+    "job_type": "Full-Time",
+    "salary_range": "₹8,000,000 - ₹13,000,000 / year",
+    "posted_date": "2026-08-25",
+    "description": "NovaSpark Ecosystems is looking for a Partnerships Manager to build and manage a network of channel partners, resellers, and strategic alliances to accelerate indirect revenue growth.",
+    "required_skills": ["Partnership Management", "Strategic Alliances", "Business Development", "Contract Negotiation", "Relationship Building"],
+    "preferred_skills": ["Channel Sales", "Go-to-Market Strategy", "MoU/Agreement Drafting", "Co-marketing", "SaaS Ecosystem"],
+    "experience_required": "2-5 years",
+    "responsibilities": [
+      "Identify, recruit, and onboard channel partners and resellers.",
+      "Define and manage partner enablement programs and joint go-to-market plans.",
+      "Negotiate partnership agreements, commissions, and co-sell arrangements.",
+      "Track partner-sourced pipeline and report on indirect revenue contribution."
+    ]
+  },
+  {
+    "id": "job-115",
+    "title": "Performance Marketing Manager",
+    "company": "AdSurge Digital",
+    "location": "Mumbai / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹7,000,000 - ₹11,000,000 / year",
+    "posted_date": "2026-08-30",
+    "description": "AdSurge Digital is hiring a Performance Marketing Manager to own paid acquisition across Google, Meta, and programmatic channels, driving measurable ROI through data-led campaign optimization.",
+    "required_skills": ["Google Ads", "Meta Ads", "Performance Marketing", "Analytics", "A/B Testing", "Budget Management"],
+    "preferred_skills": ["Programmatic Advertising", "DV360", "Attribution Modelling", "Python/SQL for analytics", "Looker Studio"],
+    "experience_required": "2-4 years",
+    "responsibilities": [
+      "Plan, launch, and optimize paid campaigns across Google Search, Display, and Meta.",
+      "Manage monthly ad budgets of ₹50L+ and maintain target ROAS.",
+      "Run structured A/B tests on creatives, audiences, and landing pages.",
+      "Build weekly performance dashboards in Looker Studio and report to leadership."
+    ]
+  },
+  {
+    "id": "job-116",
+    "title": "Brand Marketing Executive",
+    "company": "Luminary Consumer Goods",
+    "location": "Pune / Hybrid",
+    "job_type": "Full-Time",
+    "salary_range": "₹5,000,000 - ₹7,500,000 / year",
+    "posted_date": "2026-08-26",
+    "description": "Luminary Consumer Goods needs a Brand Marketing Executive to develop brand positioning, execute campaigns across offline and online channels, and drive consumer awareness and preference.",
+    "required_skills": ["Brand Management", "Campaign Planning", "Consumer Insights", "Storytelling", "ATL/BTL Marketing"],
+    "preferred_skills": ["Integrated Marketing", "Market Research", "Media Planning", "Packaging Design Coordination", "PR"],
+    "experience_required": "1-3 years",
+    "responsibilities": [
+      "Develop and execute brand campaigns across TV, digital, and OOH channels.",
+      "Commission and analyze consumer research studies to inform positioning.",
+      "Coordinate with agencies on creative briefs, media plans, and brand guidelines.",
+      "Track brand health metrics (awareness, consideration, NPS) and report quarterly."
+    ]
+  },
+  {
+    "id": "job-117",
+    "title": "Growth Hacker / Growth Marketing Analyst",
+    "company": "Kite Fintech",
+    "location": "Bengaluru / Remote",
+    "job_type": "Full-Time",
+    "salary_range": "₹5,500,000 - ₹8,500,000 / year",
+    "posted_date": "2026-08-29",
+    "description": "Kite Fintech is looking for a Growth Marketing Analyst to run experiments across the funnel — acquisition, activation, retention, and referral — using data to identify and scale what works.",
+    "required_skills": ["Growth Marketing", "Funnel Analysis", "Experimentation", "SQL", "Product Analytics"],
+    "preferred_skills": ["Mixpanel", "Amplitude", "Referral Programs", "Email Automation", "Python"],
+    "experience_required": "1-3 years",
+    "responsibilities": [
+      "Run rapid growth experiments across acquisition, onboarding, and retention funnels.",
+      "Analyze cohort data in Mixpanel/Amplitude to identify drop-off points.",
+      "Design and measure referral and viral loop programs.",
+      "Collaborate with product and engineering to implement growth features."
+    ]
+  },
+  {
+    "id": "job-118",
+    "title": "Social Media & Community Manager",
+    "company": "Wavefront Studios",
+    "location": "Remote, India",
+    "job_type": "Full-Time",
+    "salary_range": "₹3,500,000 - ₹5,500,000 / year",
+    "posted_date": "2026-08-24",
+    "description": "Wavefront Studios is hiring a Social Media & Community Manager to grow our brand presence across Instagram, LinkedIn, X (Twitter), and YouTube while building an engaged creator and user community.",
+    "required_skills": ["Social Media Management", "Community Building", "Content Calendar", "Copywriting", "Engagement Analytics"],
+    "preferred_skills": ["Hootsuite / Buffer", "Video Scripting", "Canva", "Creator Partnerships", "Notion"],
+    "experience_required": "0-2 years",
+    "responsibilities": [
+      "Own and manage posting schedules across Instagram, LinkedIn, X, and YouTube.",
+      "Write engaging captions, scripts, and community response copy.",
+      "Moderate and grow Discord/Slack community channels.",
+      "Track follower growth, reach, and engagement metrics and report weekly."
+    ]
+  },
+  {
+    "id": "job-119",
+    "title": "Marketing & Communications Intern",
+    "company": "BrightSpark Digital",
+    "location": "Remote",
+    "job_type": "Internship",
+    "salary_range": "₹8,000 - ₹12,000 / month",
+    "posted_date": "2026-08-30",
+    "apply_url": "https://internshala.com/internship/detail/marketing-communications-intern-brightspark-digital119",
+    "description": "BrightSpark Digital is looking for a Marketing & Communications Intern to assist with social media, email campaigns, blog content, and PR outreach. Great opportunity to work with a fast-growing startup.",
+    "required_skills": ["Content Writing", "Social Media", "Communication", "MS Office", "Canva"],
+    "preferred_skills": ["SEO Writing", "Email Marketing", "HubSpot", "Analytics"],
+    "experience_required": "0 years (Fresher)",
+    "responsibilities": [
+      "Write and schedule social media posts across Instagram, LinkedIn, and X.",
+      "Assist with drafting email newsletters and campaign copy.",
+      "Research and write 2 blog posts per week on marketing topics.",
+      "Track campaign analytics and prepare weekly performance summaries."
+    ]
+  },
+  {
+    "id": "job-120",
+    "title": "Business Development (Sales) Intern",
+    "company": "VentureBridge India",
+    "location": "Delhi (Work from Office)",
+    "job_type": "Internship",
+    "salary_range": "₹10,000 - ₹15,000 / month + incentives",
+    "posted_date": "2026-08-29",
+    "apply_url": "https://internshala.com/internship/detail/business-development-sales-intern-venturebridge-india120",
+    "description": "VentureBridge India is seeking a Business Development Intern to help identify B2B leads, run cold outreach, support client onboarding, and research new market opportunities.",
+    "required_skills": ["Communication", "Research", "MS Excel", "Outreach", "Presentation"],
+    "preferred_skills": ["CRM basics", "LinkedIn Sales Navigator", "Cold Emailing", "B2B Sales"],
+    "experience_required": "0 years (Fresher)",
+    "responsibilities": [
+      "Research and identify target companies and decision-makers on LinkedIn.",
+      "Send personalized cold emails and LinkedIn messages to prospects.",
+      "Maintain lead tracking in Excel/CRM and report weekly pipeline updates.",
+      "Support senior BD team in client meetings and proposal preparation."
+    ]
+  },
+  {
+    "id": "job-121",
+    "title": "HR & Recruitment Intern",
+    "company": "TalentFirst Staffing",
+    "location": "Remote",
+    "job_type": "Internship",
+    "salary_range": "₹6,000 - ₹10,000 / month",
+    "posted_date": "2026-08-28",
+    "apply_url": "https://internshala.com/internship/detail/hr-recruitment-intern-talentfirst-staffing121",
+    "description": "TalentFirst Staffing needs an HR & Recruitment Intern to support sourcing, screening, scheduling, and onboarding activities for various client mandates.",
+    "required_skills": ["Communication", "Recruitment Basics", "MS Office", "LinkedIn", "Organization"],
+    "preferred_skills": ["HRMS Tools", "JD Writing", "ATS basics", "Interviewing skills"],
+    "experience_required": "0 years (Fresher)",
+    "responsibilities": [
+      "Source candidates from LinkedIn, Naukri, and Internshala for open positions.",
+      "Screen resumes and shortlist candidates matching job descriptions.",
+      "Schedule and coordinate interviews between candidates and hiring managers.",
+      "Maintain candidate databases and update recruitment trackers."
+    ]
+  },
+  {
+    "id": "job-122",
+    "title": "Content Writing Intern",
+    "company": "Inkflow Media",
+    "location": "Remote",
+    "job_type": "Internship",
+    "salary_range": "₹5,000 - ₹8,000 / month",
+    "posted_date": "2026-08-27",
+    "apply_url": "https://internshala.com/internship/detail/content-writing-intern-inkflow-media122",
+    "description": "Inkflow Media is hiring a Content Writing Intern to create SEO-friendly articles, social media captions, product descriptions, and research-backed long-form content.",
+    "required_skills": ["Content Writing", "Grammar & Editing", "Research", "SEO basics", "Copywriting"],
+    "preferred_skills": ["WordPress", "Ahrefs/SEMrush basics", "Grammarly", "Creative Writing"],
+    "experience_required": "0 years (Fresher)",
+    "responsibilities": [
+      "Write 3–5 SEO-optimized blog articles per week on assigned topics.",
+      "Create engaging social media captions for Instagram and LinkedIn.",
+      "Research trending topics and generate content ideas for the editorial calendar.",
+      "Proofread and edit content before publishing on WordPress."
+    ]
+  }
+]

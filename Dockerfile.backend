@@ -1,0 +1,45 @@
+﻿# ── Stage 1: builder ──────────────────────────────────────────────────────────
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+
+# Install deps into isolated prefix
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ── Stage 2: runtime ──────────────────────────────────────────────────────────
+FROM python:3.11-slim AS runtime
+
+# Non-root user for security
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /install /usr/local
+
+# Copy backend application source
+COPY backend/ ./backend/
+
+# Copy only the inference-critical parts of the ml/ package:
+#   - ml/model/          (JobMatcherNN architecture — imported at runtime)
+#   - ml/checkpoints/    (trained matcher_model.pt — loaded at startup)
+#   - ml/inference/      (KrishiInference — used by ml_service.py)
+#   - ml/__init__.py
+COPY ml/__init__.py        ./ml/__init__.py
+COPY ml/model/             ./ml/model/
+COPY ml/checkpoints/       ./ml/checkpoints/
+COPY ml/inference/         ./ml/inference/
+
+# Ensure data dir exists for JSON DB fallback
+RUN mkdir -p backend/app/data && chown -R appuser:appgroup /app
+
+USER appuser
+
+# Set working directory to backend so uvicorn resolves app.main correctly
+WORKDIR /app/backend
+
+EXPOSE 8000
+
+# PORT is set automatically by Railway/Render; fallback to 8000
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"]

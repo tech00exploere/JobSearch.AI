@@ -1,0 +1,21 @@
+﻿{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm ci",
+  "env": {
+    "BACKEND_URL": "@backend-url"
+  },
+  "build": {
+    "env": {
+      "BACKEND_URL": "@backend-url",
+      "NEXT_PUBLIC_API_URL": "@next-public-api-url"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://your-backend.railway.app/api/:path*"
+    }
+  ]
+}

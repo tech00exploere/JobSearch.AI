@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Produces a self-contained .next/standalone build for Docker
-  output: "standalone",
+  // Produces a self-contained .next/standalone build ONLY for Docker environments.
+  // This prevents Vercel deployments (which package serverless natively) from failing.
+  output: process.env.OUTPUT_STANDALONE === "true" ? "standalone" : undefined,
 
   /**
    * API Proxy — rewrites /api/* to the FastAPI backend.

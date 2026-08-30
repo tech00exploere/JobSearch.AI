@@ -1,4 +1,4 @@
-﻿# ── Stage 1: deps ─────────────────────────────────────────────────────────────
+# ── Stage 1: deps ─────────────────────────────────────────────────────────────
 FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -20,6 +20,9 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 # BACKEND_URL is used by next.config.ts rewrites (server-side)
 ARG BACKEND_URL
 ENV BACKEND_URL=${BACKEND_URL}
+
+# Enable standalone output mode specifically for Docker builds
+ENV OUTPUT_STANDALONE=true
 
 RUN npm run build
 

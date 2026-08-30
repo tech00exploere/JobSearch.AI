@@ -1,0 +1,17 @@
+﻿services:
+  - type: web
+    name: jobsearch-backend
+    env: docker
+    dockerfilePath: Dockerfile.backend
+    plan: free
+    envVars:
+      - key: MONGODB_URI
+        value: "mongodb+srv://mayidoit0_db_user:VLBT8hdKtAFzlwtY@cluster0.y9f4ysj.mongodb.net/?appName=Cluster0"
+      - key: PORT
+        value: "8000"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: FRONTEND_URL
+        placeholder: "Enter your Vercel frontend URL here once deployed"
+      - key: GEMINI_API_KEY
+        placeholder: "Enter your optional Gemini API key"

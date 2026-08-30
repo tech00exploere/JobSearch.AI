@@ -11,6 +11,7 @@ interface PersonalInfo {
   location: string;
   github: string;
   linkedin: string;
+  internshala_profile?: string;
 }
 
 interface Project {
@@ -46,6 +47,7 @@ export default function ProfilePage() {
     location: "",
     github: "",
     linkedin: "",
+    internshala_profile: "",
   });
   const [summary, setSummary] = useState<string>("");
   const [skills, setSkills] = useState<Record<string, string[]>>({

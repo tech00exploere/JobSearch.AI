@@ -310,7 +310,7 @@ export default function MatchPage() {
 
               <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "flex-end", gap: 12 }}>
                 <a href="/approval" style={{ padding: "10px 18px", background: "#2563eb", color: "#fff", borderRadius: 8, fontWeight: 600, textDecoration: "none", fontSize: 13 }}>
-                  Proceed to Approval Queue ->
+                  Proceed to Approval Queue -&gt;
                 </a>
               </div>
             </div>

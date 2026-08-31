@@ -159,9 +159,9 @@ async def approve_application(request: SubmitApplicationRequest) -> Dict[str, An
         # If action is 'approved', route to submission_router
         if request.action == "approved":
             from app.services.submission_provider import submission_router
-            
+
             candidate_profile = resume_rag_engine.get_full_resume()
-            
+
             res = submission_router.route_and_submit(
                 application_record=app_record,
                 candidate_profile=candidate_profile,
@@ -170,14 +170,14 @@ async def approve_application(request: SubmitApplicationRequest) -> Dict[str, An
             )
             status = res["status"]
             notes_addon = f"{res['method']}: {res['details']}"
-            notes = f"{notes}\n{notes_addon}".strip() if notes else notes_addon
+            notes = f"{notes}\\n{notes_addon}".strip() if notes else notes_addon
             channel = res["method"]
 
         import datetime
         timestamp_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         resume_version = "resume.pdf" if os.path.exists(RESUME_PDF_PATH) else "master_resume.json"
 
-        return tracker_service.submit_application(
+        result = tracker_service.submit_application(
             application_id=request.application_id,
             action=status,
             notes=notes,
@@ -186,6 +186,13 @@ async def approve_application(request: SubmitApplicationRequest) -> Dict[str, An
             submitted_at=timestamp_now if status in ["Submitted", "Handoff"] else None,
             mapped_answers_supplied=answers if answers else None
         )
+
+        # For handoff channels, surface the job URL and cover letter to the frontend
+        if status == "Handoff" and res:
+            result["job_url"] = res.get("job_url", "")
+            result["cover_letter"] = res.get("cover_letter", "")
+
+        return result
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 

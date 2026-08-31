@@ -232,30 +232,19 @@ class HandoffProvider(SubmissionProvider):
         }
         
     def submit(self, payload: Dict[str, Any], pdf_path: Optional[str] = None) -> Dict[str, Any]:
-        url = payload["url"]
-        
-        # Copy to clipboard
-        clipboard_status = "Cover letter copy skipped (clipboard unavailable)."
-        if pyperclip:
-            try:
-                pyperclip.copy(payload["cover_letter"])
-                clipboard_status = "Tailored cover letter copied to system clipboard!"
-            except Exception as e:
-                clipboard_status = f"Clipboard copy failed: {e}"
-
-        # Open job url in browser
-        browser_status = "Browser open skipped."
-        if url:
-            try:
-                webbrowser.open(url)
-                browser_status = f"Opened job portal in your default browser: {url}"
-            except Exception as e:
-                browser_status = f"Could not launch browser automatically: {e}"
+        url = payload.get("url", "")
+        cover_letter = payload.get("cover_letter", "")
 
         return {
             "status": "Handoff",
             "method": "Manual Browser Handoff",
-            "details": f"{browser_status} {clipboard_status} Paste the cover letter directly to complete the submission."
+            "job_url": url,
+            "cover_letter": cover_letter,
+            "details": (
+                f"Open the job link and paste the cover letter to complete your application."
+                if url else
+                "No job URL found. Paste the cover letter into the employer portal manually."
+            )
         }
 
 
@@ -293,43 +282,26 @@ class IntershalProvider(SubmissionProvider):
         }
 
     def submit(self, payload: Dict[str, Any], pdf_path: Optional[str] = None) -> Dict[str, Any]:
-        url = payload["url"]
+        url = payload.get("url", "")
         internshala_profile = payload.get("internshala_profile", "")
         role = payload.get("role_title", "this role")
         company = payload.get("company", "")
-
-        # Copy tailored cover letter to clipboard
-        clipboard_status = "Cover letter copy skipped (clipboard unavailable)."
-        if pyperclip:
-            try:
-                pyperclip.copy(payload["cover_letter"])
-                clipboard_status = "Tailored cover letter copied to clipboard — paste it into the Internshala cover letter box."
-            except Exception as e:
-                clipboard_status = f"Clipboard copy failed: {e}"
-
-        # Open the Internshala job/internship page in browser
-        browser_status = "Browser open skipped — no URL provided."
-        if url:
-            try:
-                webbrowser.open(url)
-                browser_status = f"Opened Internshala listing for {role} at {company} in your browser."
-            except Exception as e:
-                browser_status = f"Could not launch browser: {e}"
+        cover_letter = payload.get("cover_letter", "")
 
         profile_hint = (
             f"Your Internshala profile: {internshala_profile}"
             if internshala_profile
-            else "Tip: Add your Internshala Profile URL in your JobSetu Profile page so it auto-fills next time."
+            else "Tip: Add your Internshala Profile URL in your Candidate Profile page so it auto-fills next time."
         )
 
         return {
             "status": "Handoff",
             "method": "Internshala Browser Handoff",
+            "job_url": url,
+            "cover_letter": cover_letter,
             "details": (
-                f"{browser_status} "
-                f"{clipboard_status} "
-                f"{profile_hint} "
-                f"Log in to Internshala if needed, then click 'Apply Now' and paste the cover letter."
+                f"Open the Internshala listing for {role} at {company}, log in, click 'Apply Now', "
+                f"and paste the cover letter below. {profile_hint}"
             )
         }
 

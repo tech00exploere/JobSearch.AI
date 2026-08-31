@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { getApplications, getApplicationForm, approveApplication, type ApplicationRecord } from "@/lib/api";
@@ -42,13 +42,19 @@ function getMatchBadge(score: number): { bg: string; color: string; border: stri
 export default function ApprovalQueuePage() {
   const [apps, setApps] = useState<ApplicationRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [actionMessage, setActionMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [actionMessage, setActionMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+    jobUrl?: string;
+    coverLetter?: string;
+  } | null>(null);
 
   const [formMappings, setFormMappings] = useState<Record<string, FormMapping>>({});
   const [formAnswers, setFormAnswers] = useState<Record<string, Record<string, string>>>({});
   const [expandedApp, setExpandedApp] = useState<string | null>(null);
   const [loadingForm, setLoadingForm] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   function loadApplications() {
     setIsLoading(true);
@@ -96,11 +102,17 @@ export default function ApprovalQueuePage() {
       const answers = formAnswers[appId] || {};
       const res = await approveApplication(appId, action, undefined, action === "approved" ? answers : undefined);
       const channel = res.submission_channel || "";
+      const isHandoff = res.status === "Handoff" || channel.toLowerCase().includes("handoff");
+
       setActionMessage({
         text: action === "approved"
-          ? `Application submitted! Channel: ${channel || "Manual Handoff"}. Time: ${res.submitted_at || "now"}.`
+          ? isHandoff
+            ? `Ready for manual submission via ${channel || "Browser Handoff"}. Open the link below and paste the cover letter.`
+            : `Application submitted! Channel: ${channel || "API"}. Time: ${res.submitted_at || "now"}.`
           : "Application skipped and moved out of queue.",
-        type: "success"
+        type: "success",
+        jobUrl: res.job_url || "",
+        coverLetter: res.cover_letter || "",
       });
       loadApplications();
       setExpandedApp(null);
@@ -126,20 +138,77 @@ export default function ApprovalQueuePage() {
         </p>
       </header>
 
-      {/* Action Toast */}
+      {/* Action Toast / Handoff Panel */}
       {actionMessage && (
         <div style={{
-          padding: "12px 18px", borderRadius: 9, marginBottom: 24,
-          background: actionMessage.type === "success" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
-          border: `1px solid ${actionMessage.type === "success" ? "rgba(34,197,94,0.35)" : "rgba(239,68,68,0.35)"}`,
-          color: actionMessage.type === "success" ? "#86efac" : "#fca5a5",
-          fontSize: 13, fontWeight: 600,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          borderRadius: 10, marginBottom: 24,
+          background: actionMessage.type === "success" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
+          border: `1px solid ${actionMessage.type === "success" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
+          overflow: "hidden",
         }}>
-          <span>{actionMessage.text}</span>
-          <button onClick={() => setActionMessage(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", opacity: 0.6, fontSize: 16, lineHeight: 1 }}>x</button>
+          {/* Top bar */}
+          <div style={{
+            padding: "12px 18px", display: "flex", justifyContent: "space-between", alignItems: "center",
+            color: actionMessage.type === "success" ? "#86efac" : "#fca5a5",
+            fontSize: 13, fontWeight: 600,
+          }}>
+            <span>{actionMessage.text}</span>
+            <button onClick={() => { setActionMessage(null); setCopied(false); }} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", opacity: 0.6, fontSize: 16, lineHeight: 1 }}>x</button>
+          </div>
+
+          {/* Handoff extras: link + cover letter */}
+          {actionMessage.jobUrl && (
+            <div style={{ padding: "0 18px 14px" }}>
+              <a
+                href={actionMessage.jobUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block", padding: "9px 20px", background: "#2563eb",
+                  color: "#fff", borderRadius: 7, fontWeight: 700, textDecoration: "none",
+                  fontSize: 13, marginBottom: 14,
+                }}
+              >
+                Open Job Link &rarr;
+              </a>
+
+              {actionMessage.coverLetter && (
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Cover Letter — Copy &amp; Paste into Application
+                    </span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(actionMessage.coverLetter || "");
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2500);
+                      }}
+                      style={{
+                        padding: "5px 14px", background: copied ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)",
+                        border: `1px solid ${copied ? "rgba(34,197,94,0.4)" : "rgba(255,255,255,0.15)"}`,
+                        color: copied ? "#86efac" : "#94a3b8", borderRadius: 6,
+                        fontSize: 12, fontWeight: 600, cursor: "pointer",
+                      }}
+                    >
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                  <pre style={{
+                    fontSize: 12, color: "#cbd5e1", background: "#0f172a",
+                    padding: 12, borderRadius: 8, whiteSpace: "pre-wrap",
+                    fontFamily: "inherit", maxHeight: 200, overflowY: "auto",
+                    margin: 0, border: "1px solid rgba(255,255,255,0.06)",
+                  }}>
+                    {actionMessage.coverLetter}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
+
 
       {isLoading ? (
         <div style={{ color: "#64748b", padding: 40, textAlign: "center", fontSize: 14 }}>

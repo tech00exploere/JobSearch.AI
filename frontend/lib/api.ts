@@ -298,3 +298,32 @@ export async function removeDiscoveredJob(id: string): Promise<any> {
     method: "DELETE",
   });
 }
+
+/**
+ * Platform Search Link — NOT an individual job listing.
+ * A real URL to the platform's own job-search results page.
+ * Opening this URL DOES NOT change any application status.
+ */
+export interface PlatformSearchLink {
+  platform: string;
+  display_name: string;
+  icon: string;
+  search_url: string;       // Real platform search URL
+  label: string;            // e.g. "Browse LinkedIn Jobs"
+  search_query: string;     // The role the user searched
+  location: string;
+}
+
+export async function getPlatformLinks(criteria: Record<string, any>): Promise<{
+  status: string;
+  role: string;
+  location: string;
+  platform_links: PlatformSearchLink[];
+  note: string;
+}> {
+  return apiFetch("/job-discovery/platform-links", {
+    method: "POST",
+    body: JSON.stringify(criteria),
+  });
+}
+

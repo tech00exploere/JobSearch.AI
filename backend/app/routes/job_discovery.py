@@ -4,6 +4,7 @@ from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query, Body
 from app.schemas.discovered_job import NormalizedJob
 from app.job_discovery import orchestrator
+from app.job_discovery.platform_search import generate_platform_links
 from app.job_discovery.url_resolver import resolve_application_url
 from app.services.matching_service import matching_service
 from app.services.tracker_service import tracker_service
@@ -28,6 +29,40 @@ async def search_and_discover_jobs(criteria: Dict[str, Any] = Body(...)) -> Dict
         "diagnostics": diagnostics.dict(),
         "source": "web_discovery"
     }
+
+@router.post("/job-discovery/platform-links", summary="Generate real platform search URLs for user criteria")
+async def get_platform_search_links(criteria: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+    """
+    Returns real platform job-search URLs (LinkedIn, Indeed, Naukri, etc.)
+    pre-populated with the user's search criteria.
+
+    These are NOT individual job listings — they are links to the platform's
+    own search results page. Clicking opens the external platform in a new tab.
+    No API calls to any platform are made. No jobs are fetched.
+    Opening a platform search link NEVER changes application status.
+    """
+    role = criteria.get("role") or "Software Engineer"
+    location = criteria.get("location") or "India"
+    remote = bool(criteria.get("remote", False))
+    experience = criteria.get("experience") or ""
+    internship = bool(criteria.get("internship", False))
+
+    links = generate_platform_links(
+        role=role,
+        location=location,
+        remote=remote,
+        experience=experience,
+        internship=internship,
+    )
+    return {
+        "status": "success",
+        "role": role,
+        "location": location,
+        "platform_links": links,
+        "note": "These are direct links to each platform's own job search page. JobSearch.ai does not retrieve, cache, or claim ownership of listings from these platforms."
+    }
+
+
 
 @router.get("/discovered-jobs", summary="Get discovered public job listings")
 async def get_discovered_jobs(

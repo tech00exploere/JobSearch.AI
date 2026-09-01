@@ -36,6 +36,13 @@ The system preserves **real job and application URLs** instead of generating fak
 
 JobSearch.ai **never automatically applies for a candidate**.
 
+
+preview :
+<img width="1900" height="862" alt="Screenshot (375)" src="https://github.com/user-attachments/assets/1492c2ca-29ca-404a-b151-ea6343c7e6d1" />
+<img width="1890" height="860" alt="Screenshot (376)" src="https://github.com/user-attachments/assets/226030ab-a3f1-4fa7-a413-2030a21bcb9f" />
+<img width="1885" height="874" alt="Screenshot (377)" src="https://github.com/user-attachments/assets/81df9ea2-4966-415f-82e4-f7553ca362d6" />
+
+
 ```text
 Discover Job
      ↓
@@ -52,10 +59,6 @@ MIT — see [LICENSE](LICENSE)
 
 ---
 
-preview :
-<img width="1900" height="862" alt="Screenshot (375)" src="https://github.com/user-attachments/assets/1492c2ca-29ca-404a-b151-ea6343c7e6d1" />
-<img width="1890" height="860" alt="Screenshot (376)" src="https://github.com/user-attachments/assets/226030ab-a3f1-4fa7-a413-2030a21bcb9f" />
-<img width="1885" height="874" alt="Screenshot (377)" src="https://github.com/user-attachments/assets/81df9ea2-4966-415f-82e4-f7553ca362d6" />
 
 
 

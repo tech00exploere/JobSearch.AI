@@ -1,5 +1,5 @@
 """
-JobSetu AI Tool Suite — Dedicated AI Agent Tools
+JobSearch.ai Tool Suite — Dedicated AI Agent Tools
 =================================================
 Exposes authorized tools for Job Discovery, JD Analysis, Resume RAG,
 Deterministic Matching, Material Tailoring, HITL Approval, and Application Tracking.
@@ -158,7 +158,7 @@ def tool_track_application() -> Dict[str, Any]:
 
 # ─── Tool Registry Map ────────────────────────────────────────────────────────
 
-JOBSETU_TOOLS = {
+JOBSEARCH_TOOLS = {
     "search_jobs": tool_search_jobs,
     "get_job_details": tool_get_job_details,
     "analyze_job_description": tool_analyze_job_description,

@@ -1,7 +1,7 @@
 """
 Chat Route — POST /api/chat
 ================================
-Main interaction endpoint for JobSetu AI Agent.
+Main interaction endpoint for JobSearch.ai Agent.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -11,13 +11,13 @@ from app.services.llm_service import get_agent_response
 router = APIRouter()
 
 
-@router.post("/chat", response_model=ChatResponse, summary="Send a message to JobSetu AI Agent")
+@router.post("/chat", response_model=ChatResponse, summary="Send a message to JobSearch.ai Agent")
 async def chat(request: ChatRequest) -> ChatResponse:
     """
     Main Agentic Chat Endpoint.
     
     - Accepts user query / job search prompt
-    - Triggers JobSetu AI Agent loop (Job Search, JD Analysis, Deterministic Matcher, Resume RAG, Material Tailoring)
+    - Triggers JobSearch.ai Agent loop (Job Search, JD Analysis, Deterministic Matcher, Resume RAG, Material Tailoring)
     - Returns structured answer + visual tool badges + HITL status
     """
     try:
@@ -25,5 +25,5 @@ async def chat(request: ChatRequest) -> ChatResponse:
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"JobSetu Agent execution failed: {str(exc)}",
+            detail=f"JobSearch.ai Agent execution failed: {str(exc)}",
         ) from exc

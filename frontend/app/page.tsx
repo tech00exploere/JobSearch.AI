@@ -35,7 +35,7 @@ const FEATURE_CARDS = [
   {
     num: "04",
     title: "Candidate-Controlled Tracking",
-    desc: "JobSetu opens the real external application site for you to apply, and you explicitly confirm your status.",
+    desc: "JobSearch.ai opens the real external application site for you to apply, and you explicitly confirm your status.",
     accent: "#f59e0b",
   },
 ];

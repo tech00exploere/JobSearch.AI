@@ -5,8 +5,8 @@ from app.job_discovery.url_resolver import resolve_application_url
 class HumanHandoffProvider:
     """
     Human-Controlled External Navigation Provider.
-    In JobSetu AI, final application submission is ALWAYS controlled manually by the candidate
-    on the external job portal. JobSetu provides the exact target URL for direct client-side navigation.
+    In JobSearch.ai, final application submission is ALWAYS controlled manually by the candidate
+    on the external job portal. JobSearch.ai provides the exact target URL for direct client-side navigation.
     It NEVER pretends that an application was automatically submitted.
     """
 

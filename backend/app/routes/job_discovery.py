@@ -145,7 +145,7 @@ async def mark_job_applied(job_id: str, notes: Optional[str] = Body(None)) -> Di
     """
     Explicitly marks job application status as APPLIED in the tracker database.
     Triggered ONLY when candidate explicitly clicks 'I Applied'.
-    Does NOT claim JobSetu independently verified submission.
+    Does NOT claim JobSearch.ai independently verified submission.
     """
     job_data = await get_discovered_job_by_id(job_id)
 

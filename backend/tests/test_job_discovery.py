@@ -39,7 +39,7 @@ def test_apply_does_not_change_status():
 def test_apply_does_not_call_submission_api():
     """
     INVARIANT: Apply Now MUST NOT call any automated submission API.
-    JobSetu AI has zero auto-submission endpoints.
+    JobSearch.ai has zero auto-submission endpoints.
     """
     from app.services import submission_provider
     provider = submission_provider.HumanHandoffProvider()

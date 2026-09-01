@@ -448,7 +448,7 @@ export default function ProfilePage() {
                 style={{ width: "100%", padding: "10px 12px", borderRadius: 6, background: "#0f172a", border: "1px solid rgba(249,115,22,0.2)", color: "#f8fafc" }}
               />
               <p style={{ margin: "4px 0 0", fontSize: 11, color: "#64748b" }}>
-                Saved here so JobSetu can reference it when preparing Internshala applications. No password needed.
+                Saved here so JobSearch.ai can reference it when preparing Internshala applications. No password needed.
               </p>
             </div>
           </div>

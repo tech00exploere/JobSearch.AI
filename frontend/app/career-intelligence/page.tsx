@@ -146,7 +146,7 @@ export default function CareerIntelligencePage() {
       {/* Header */}
       <div style={{ marginBottom: 25 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, color: "#60a5fa", margin: 0 }}>
-          JOBSETU AI — Web-Wide Job Discovery Engine
+          JOBSEARCH AI — Web-Wide Job Discovery Engine
         </h1>
         <p style={{ color: "#94a3b8", marginTop: 6, fontSize: 14 }}>
           Discover real job openings across public ATS portals (Greenhouse, Lever, Ashby, Workday, SmartRecruiters), job boards (LinkedIn, Indeed, Internshala, Naukri, Monster, Wellfound), and company career portals.

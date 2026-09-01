@@ -5,7 +5,7 @@ from typing import Optional
 # Load MongoDB URI from environment or fallback to localhost
 MONGO_URI = os.getenv(
     "MONGODB_URI",
-    "mongodb://localhost:27017/jobsetu"
+    "mongodb://localhost:27017/jobsearch_ai"
 )
 
 # Singleton client holder
@@ -22,6 +22,6 @@ def get_client() -> MongoClient:
             pass
     return _client
 
-def get_database(db_name: str = "jobsetu"):
+def get_database(db_name: str = "jobsearch_ai"):
     client = get_client()
     return client[db_name]

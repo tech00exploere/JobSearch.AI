@@ -1,5 +1,5 @@
 """
-Pydantic Schemas for JobSetu AI — AI Job Search & Application Agent
+Pydantic Schemas for JobSearch.ai — AI Job Search & Application Agent
 =====================================================================
 Request and response models for Job discovery, JD analysis, Resume RAG,
 Deterministic Matching, HITL Approval, and Application Tracking.
@@ -12,7 +12,7 @@ from typing import List, Optional, Literal, Dict, Any
 # ─── Chat Schemas ─────────────────────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
-    """Request payload for JobSetu AI agent chat endpoint"""
+    """Request payload for JobSearch.ai agent chat endpoint"""
     message: str = Field(
         ...,
         min_length=1,

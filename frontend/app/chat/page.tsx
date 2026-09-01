@@ -210,7 +210,7 @@ export default function ChatPage() {
 
         {isLoading && (
           <div style={{ color: "#60a5fa", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="spinner">⚙️</span> JobSetu AI Agent is searching jobs & calculating fit...
+            <span className="spinner">⚙️</span> JobSearch.ai Agent is searching jobs & calculating fit...
           </div>
         )}
         <div ref={messagesEndRef} />

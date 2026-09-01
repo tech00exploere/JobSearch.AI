@@ -1,5 +1,5 @@
 """
-JobSetu AI Backend Unit & Integration Test Suite
+JobSearch.ai Backend Unit & Integration Test Suite
 ==================================================
 Tests API endpoints, Job Search, Deterministic Matcher, Resume RAG,
 Material Tailoring, HITL Application Approval, and Tracker DB logging.

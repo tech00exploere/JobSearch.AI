@@ -1,7 +1,7 @@
 """
-JobSetu AI Live Gemini Agent Orchestrator
+JobSearch.ai Live Gemini Agent Orchestrator
 ===========================================
-Integrates live Google Gemini API (`GEMINI_API_KEY`) with JobSetu AI tool calls,
+Integrates live Google Gemini API (`GEMINI_API_KEY`) with JobSearch.ai tool calls,
 Resume RAG context, and deterministic match scoring.
 """
 
@@ -37,7 +37,7 @@ if GEMINI_API_KEY:
 
 def get_agent_response(message: str) -> ChatResponse:
     """
-    Main ReAct Agent orchestrator for JobSetu AI.
+    Main ReAct Agent orchestrator for JobSearch.ai.
     Executes tools, retrieves RAG context, and queries live Gemini API.
     """
     tool_badges: List[ToolCallBadge] = []
@@ -85,7 +85,7 @@ def get_agent_response(message: str) -> ChatResponse:
         return ChatResponse(
             response=" No specific jobs matched your query keywords. Try searching for terms like 'React', 'FastAPI', 'Python', or 'Full-Stack'.",
             tool_calls=tool_badges,
-            model="Gemini-1.5-Flash + JobSetu-Agent"
+            model="Gemini-1.5-Flash + JobSearch.ai-Agent"
         )
 
     top_job = jobs[0]

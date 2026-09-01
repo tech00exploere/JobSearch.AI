@@ -1,5 +1,5 @@
 /**
- * JobSetu AI Client — API Abstraction Layer
+ * JobSearch.ai Client — API Abstraction Layer
  * ==========================================
  * All REST API calls from the Next.js frontend to the FastAPI backend.
  */

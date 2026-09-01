@@ -91,7 +91,10 @@ async def prepare_application(job_id: str = Query(...)) -> PreparedApplication:
         matched_skills=match_res.matched_skills,
         missing_skills=match_res.missing_skills,
         summary=materials.tailored_summary,
-        cover_letter=materials.tailored_cover_letter
+        cover_letter=materials.tailored_cover_letter,
+        job_url=getattr(job, "job_url", None) or getattr(job, "url", None),
+        career_page_url=getattr(job, "career_page_url", None),
+        source=getattr(job, "source", None)
     )
 
 
@@ -143,54 +146,26 @@ async def get_application_form(application_id: str) -> FormMappingResponse:
     )
 
 
-@router.post("/jobs/approve", summary="Human-in-the-Loop decision execution ([Apply] / [Skip])")
+@router.post("/jobs/approve", summary="Candidate status decision execution ([I Applied] / [Didn't Apply] / [Remove])")
 async def approve_application(request: SubmitApplicationRequest) -> Dict[str, Any]:
-    """Requires explicit human approval to submit application"""
+    """
+    Manages candidate job application status transitions.
+    - action='mark_applied': Candidate explicitly confirms manual submission -> APPLIED.
+    - action='mark_not_applied': Candidate explicitly declines -> NOT_APPLIED.
+    - action='save': Candidate shortlists job -> SAVED.
+    - action='remove': Candidate removes job -> REMOVED.
+    """
     try:
         app_record = tracker_service.get_application(request.application_id)
         if not app_record:
             raise HTTPException(status_code=404, detail=f"Application {request.application_id} not found.")
 
-        status = request.action
-        notes = request.notes or ""
-        channel = None
-        answers = request.mapped_fields or {}
-
-        # If action is 'approved', route to submission_router
-        if request.action == "approved":
-            from app.services.submission_provider import submission_router
-
-            candidate_profile = resume_rag_engine.get_full_resume()
-
-            res = submission_router.route_and_submit(
-                application_record=app_record,
-                candidate_profile=candidate_profile,
-                answers=answers,
-                resume_pdf_path=RESUME_PDF_PATH
-            )
-            status = res["status"]
-            notes_addon = f"{res['method']}: {res['details']}"
-            notes = f"{notes}\\n{notes_addon}".strip() if notes else notes_addon
-            channel = res["method"]
-
-        import datetime
-        timestamp_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        resume_version = "resume.pdf" if os.path.exists(RESUME_PDF_PATH) else "master_resume.json"
-
-        result = tracker_service.submit_application(
+        result = tracker_service.update_application_status(
             application_id=request.application_id,
-            action=status,
-            notes=notes,
-            submission_channel=channel,
-            pdf_resume_version=resume_version if status in ["Submitted", "Handoff"] else None,
-            submitted_at=timestamp_now if status in ["Submitted", "Handoff"] else None,
-            mapped_answers_supplied=answers if answers else None
+            action=request.action,
+            notes=request.notes,
+            reason=request.reason
         )
-
-        # For handoff channels, surface the job URL and cover letter to the frontend
-        if status == "Handoff" and res:
-            result["job_url"] = res.get("job_url", "")
-            result["cover_letter"] = res.get("cover_letter", "")
 
         return result
     except KeyError as exc:

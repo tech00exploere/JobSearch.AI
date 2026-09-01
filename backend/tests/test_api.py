@@ -109,7 +109,7 @@ class TestHITLAndApplicationTracker:
         response = client.post("/api/jobs/prepare?job_id=job-101")
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "Prepared"
+        assert data["status"] in ["DISCOVERED", "DISCOVERED"]
         assert "application_id" in data
         assert "tailored_cover_letter" in data
 
@@ -118,43 +118,34 @@ class TestHITLAndApplicationTracker:
         prep_res = client.post("/api/jobs/prepare?job_id=job-101")
         app_id = prep_res.json()["application_id"]
 
-        # Approve HITL
-        payload = {"application_id": app_id, "action": "approved", "notes": "Approved by user"}
+        # Candidate confirms manual submission
+        payload = {"application_id": app_id, "action": "mark_applied", "notes": "Candidate confirmed manual submission"}
         approve_res = client.post("/api/jobs/approve", json=payload)
         assert approve_res.status_code == 200
-        # Should result in 'Handoff' since NexusTech isn't Lever or Greenhouse
-        assert approve_res.json()["status"] == "Handoff"
+        assert approve_res.json()["status"] == "APPLIED"
 
-    def test_submission_routing_channels(self):
+    def test_explicit_mark_applied(self):
         from app.services.tracker_service import tracker_service
-        
 
-        # Test Lever (Lever.co url)
-        lever_app = tracker_service.prepare_application(
-            job_id="job-999", company="LeverCorp", role_title="Dev", match_score=90,
-            matched_skills=[], missing_skills=[], summary="test summary", cover_letter="test letter"
+        app = tracker_service.prepare_application(
+            job_id="job-hitl-200",
+            company="HumanControlledCorp",
+            role_title="Backend Engineer",
+            match_score=88,
+            matched_skills=["Python"],
+            missing_skills=[],
+            summary="Human-controlled HITL test",
+            cover_letter="Test letter",
+            job_url="https://careers.humancontrolledcorp.example.com/jobs/200",
+            source="company_career_page"
         )
-        # Mock a Lever URL
-        tracker_service.applications[lever_app.application_id]["job_url"] = "https://jobs.lever.co/levercorp/123"
-        
-        # Approve
-        res = client.post("/api/jobs/approve", json={"application_id": lever_app.application_id, "action": "approved"})
-        assert res.status_code == 200
-        assert res.json()["status"] == "Submitted"
-        assert "Lever API (Mocked)" in res.json().get("notes", "")
 
-        # Test Email direct application
-        email_app = tracker_service.prepare_application(
-            job_id="job-888", company="EmailCorp", role_title="Dev", match_score=85,
-            matched_skills=[], missing_skills=[], summary="test summary", cover_letter="test letter"
+        # Mark APPLIED only when user explicitly confirms
+        updated = tracker_service.update_application_status(
+            application_id=app.application_id,
+            action="mark_applied"
         )
-        tracker_service.applications[email_app.application_id]["apply_email"] = "careers@emailcorp.com"
-        
-        # Approve
-        res = client.post("/api/jobs/approve", json={"application_id": email_app.application_id, "action": "approved"})
-        assert res.status_code == 200
-        assert res.json()["status"] == "Submitted"
-        assert "Email (Mocked)" in res.json().get("notes", "")
+        assert updated["status"] == "APPLIED"
 
 
     def test_list_applications(self):

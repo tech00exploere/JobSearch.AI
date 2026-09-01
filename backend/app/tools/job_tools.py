@@ -137,10 +137,10 @@ def tool_prepare_application(job_id: str) -> Dict[str, Any]:
     }
 
 
-def tool_submit_application(application_id: str, action: str = "approved") -> Dict[str, Any]:
-    """10. submit_application: Submit application upon explicit human approval"""
+def tool_update_application_status(application_id: str, action: str = "mark_applied") -> Dict[str, Any]:
+    """10. update_application_status: Explicit candidate status update (mark_applied, mark_not_applied, save, remove)"""
     try:
-        updated = tracker_service.submit_application(application_id, action)
+        updated = tracker_service.update_application_status(application_id, action)
         return {"status": "success", "application": updated}
     except Exception as exc:
         return {"status": "error", "message": str(exc)}
@@ -168,6 +168,6 @@ JOBSETU_TOOLS = {
     "generate_tailored_resume": tool_generate_tailored_resume,
     "generate_cover_letter": tool_generate_cover_letter,
     "prepare_application": tool_prepare_application,
-    "submit_application": tool_submit_application,
+    "update_application_status": tool_update_application_status,
     "track_application": tool_track_application,
 }

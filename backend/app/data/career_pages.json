@@ -1,0 +1,272 @@
+[
+  {
+    "name": "Microsoft",
+    "url": "https://careers.microsoft.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Example Company",
+    "url": "https://boards.greenhouse.io/example",
+    "connector": "greenhouse"
+  },
+  {
+    "name": "Another Co",
+    "url": "https://jobs.lever.co/another",
+    "connector": "lever"
+  },
+  {
+    "name": "Google",
+    "url": "https://www.google.com/about/careers/applications/",
+    "connector": "generic"
+  },
+  {
+    "name": "Amazon",
+    "url": "https://www.amazon.jobs/",
+    "connector": "generic"
+  },
+  {
+    "name": "Meta",
+    "url": "https://www.metacareers.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Apple",
+    "url": "https://www.apple.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "NVIDIA",
+    "url": "https://www.nvidia.com/en-us/about-nvidia/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Adobe",
+    "url": "https://careers.adobe.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Salesforce",
+    "url": "https://www.salesforce.com/company/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Oracle",
+    "url": "https://www.oracle.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "IBM",
+    "url": "https://www.ibm.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Intel",
+    "url": "https://jobs.intel.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Cisco",
+    "url": "https://jobs.cisco.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Qualcomm",
+    "url": "https://www.qualcomm.com/company/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Dell Technologies",
+    "url": "https://jobs.dell.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Uber",
+    "url": "https://www.uber.com/us/en/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Airbnb",
+    "url": "https://careers.airbnb.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Atlassian",
+    "url": "https://www.atlassian.com/company/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Stripe",
+    "url": "https://stripe.com/jobs",
+    "connector": "generic"
+  },
+  {
+    "name": "OpenAI",
+    "url": "https://openai.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Anthropic",
+    "url": "https://www.anthropic.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Netflix",
+    "url": "https://jobs.netflix.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Spotify",
+    "url": "https://www.lifeatspotify.com/jobs",
+    "connector": "generic"
+  },
+  {
+    "name": "LinkedIn",
+    "url": "https://www.linkedin.com/jobs/",
+    "connector": "generic"
+  },
+  {
+    "name": "GitHub",
+    "url": "https://www.github.careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Red Hat",
+    "url": "https://www.redhat.com/en/jobs",
+    "connector": "generic"
+  },
+  {
+    "name": "Cloudflare",
+    "url": "https://www.cloudflare.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Datadog",
+    "url": "https://careers.datadoghq.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Twilio",
+    "url": "https://www.twilio.com/en-us/company/jobs",
+    "connector": "generic"
+  },
+  {
+    "name": "Shopify",
+    "url": "https://www.shopify.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Figma",
+    "url": "https://www.figma.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Notion",
+    "url": "https://www.notion.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Razorpay",
+    "url": "https://razorpay.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "PhonePe",
+    "url": "https://www.phonepe.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Meesho",
+    "url": "https://www.meesho.io/",
+    "connector": "generic"
+  },
+  {
+    "name": "Zepto",
+    "url": "https://www.zepto.com/s/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Groww",
+    "url": "https://groww.in/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "CRED",
+    "url": "https://careers.cred.club/",
+    "connector": "generic"
+  },
+  {
+    "name": "Swiggy",
+    "url": "https://careers.swiggy.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Zomato",
+    "url": "https://www.zomato.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Dream11",
+    "url": "https://www.dream11.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "BrowserStack",
+    "url": "https://www.browserstack.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Postman",
+    "url": "https://www.postman.com/company/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Freshworks",
+    "url": "https://www.freshworks.com/company/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Zoho",
+    "url": "https://www.zoho.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Chargebee",
+    "url": "https://www.chargebee.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "CleverTap",
+    "url": "https://clevertap.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Whatfix",
+    "url": "https://whatfix.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Hasura",
+    "url": "https://hasura.io/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Myntra",
+    "url": "https://careers.myntra.com/",
+    "connector": "generic"
+  },
+  {
+    "name": "Urban Company",
+    "url": "https://www.urbancompany.com/careers",
+    "connector": "generic"
+  },
+  {
+    "name": "Delhivery",
+    "url": "https://www.delhivery.com/careers/",
+    "connector": "generic"
+  },
+  {
+    "name": "Pine Labs",
+    "url": "https://www.pinelabs.com/careers",
+    "connector": "generic"
+  }
+]

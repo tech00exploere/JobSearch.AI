@@ -1,28 +1,32 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { getApplications, deleteApplication, clearApplications, type ApplicationRecord } from "@/lib/api";
 
-const STATUS_OPTIONS = ["All", "Prepared", "Submitted", "Skipped", "Interview", "Offer", "Rejected"];
+const STATUS_OPTIONS = ["All", "DISCOVERED", "SAVED", "VIEWED", "APPLIED", "NOT_APPLIED", "INTERVIEW", "OFFER", "REJECTED"];
 
 function getStatusStyle(status: string): { bg: string; text: string; border: string } {
   switch (status) {
+    case "APPLIED":
     case "Submitted":
       return { bg: "rgba(34,197,94,0.15)", text: "#86efac", border: "rgba(34,197,94,0.35)" };
-    case "Prepared":
-      return { bg: "rgba(251,191,36,0.15)", text: "#fde047", border: "rgba(251,191,36,0.35)" };
+    case "NOT_APPLIED":
+      return { bg: "rgba(100,116,139,0.15)", text: "#94a3b8", border: "rgba(100,116,139,0.3)" };
+    case "SAVED":
+      return { bg: "rgba(59,130,246,0.15)", text: "#93c5fd", border: "rgba(59,130,246,0.35)" };
+    case "INTERVIEW":
     case "Interview":
       return { bg: "rgba(168,85,247,0.15)", text: "#c084fc", border: "rgba(168,85,247,0.35)" };
+    case "OFFER":
     case "Offer":
       return { bg: "rgba(20,184,166,0.15)", text: "#5eead4", border: "rgba(20,184,166,0.35)" };
+    case "REJECTED":
     case "Rejected":
       return { bg: "rgba(239,68,68,0.12)", text: "#fca5a5", border: "rgba(239,68,68,0.3)" };
-    case "Skipped":
-      return { bg: "rgba(100,116,139,0.15)", text: "#94a3b8", border: "rgba(100,116,139,0.3)" };
-    case "Handoff":
-      return { bg: "rgba(249,115,22,0.15)", text: "#fdba74", border: "rgba(249,115,22,0.35)" };
+    case "DISCOVERED":
+    case "VIEWED":
     default:
-      return { bg: "rgba(59,130,246,0.15)", text: "#93c5fd", border: "rgba(59,130,246,0.3)" };
+      return { bg: "rgba(100,116,139,0.15)", text: "#cbd5e1", border: "rgba(100,116,139,0.3)" };
   }
 }
 
@@ -219,6 +223,7 @@ export default function TrackerPage() {
                 <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Role</th>
                 <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Match</th>
                 <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Status</th>
+                <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Job</th>
                 <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Updated</th>
                 <th style={{ padding: "13px 20px", color: "#475569", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Actions</th>
               </tr>
@@ -237,7 +242,9 @@ export default function TrackerPage() {
                       transition: "opacity 0.2s ease",
                     }}
                   >
-                    <td style={{ padding: "14px 20px", fontWeight: 700, color: "#60a5fa" }}>{a.company}</td>
+                    <td style={{ padding: "14px 20px", fontWeight: 700, color: "#60a5fa" }}>
+                      {a.company}
+                    </td>
                     <td style={{ padding: "14px 20px", color: "#e2e8f0", maxWidth: 260 }}>
                       <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {a.role_title}
@@ -258,6 +265,91 @@ export default function TrackerPage() {
                       }}>
                         {a.status}
                       </span>
+                    </td>
+
+                    <td style={{ padding: "14px 20px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-start" }}>
+                        {a.job_url ? (
+                          <a
+                            href={a.job_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              background: "rgba(59, 130, 246, 0.12)",
+                              color: "#60a5fa",
+                              border: "1px solid rgba(59, 130, 246, 0.3)",
+                              padding: "4px 10px",
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              textDecoration: "none"
+                            }}
+                          >
+                            View Job ↗
+                          </a>
+                        ) : (
+                          <span style={{ color: "#64748b", fontSize: 12, fontStyle: "italic" }}>
+                            Job URL unavailable
+                          </span>
+                        )}
+
+                        {a.application_url || a.job_url ? (
+                          <a
+                            href={a.application_url || a.job_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              background: "rgba(37, 99, 235, 0.15)",
+                              color: "#60a5fa",
+                              border: "1px solid rgba(37, 99, 235, 0.4)",
+                              padding: "4px 10px",
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              textDecoration: "none"
+                            }}
+                          >
+                            Apply on External Site ↗
+                          </a>
+                        ) : (
+                          <span style={{ color: "#64748b", fontSize: 12, fontStyle: "italic" }}>
+                            Application URL unavailable
+                          </span>
+                        )}
+
+                        {a.career_page_url ? (
+                          <a
+                            href={a.career_page_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              background: "rgba(168, 85, 247, 0.12)",
+                              color: "#c084fc",
+                              border: "1px solid rgba(168, 85, 247, 0.3)",
+                              padding: "4px 10px",
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              textDecoration: "none"
+                            }}
+                          >
+                            Company Career Page ↗
+                          </a>
+                        ) : (
+                          <span style={{ color: "#64748b", fontSize: 12, fontStyle: "italic" }}>
+                            Career Page unavailable
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ padding: "14px 20px", color: "#475569", fontSize: 12 }}>
                       {a.updated_at.split(" ")[0]}

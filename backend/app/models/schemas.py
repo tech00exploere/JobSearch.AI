@@ -55,6 +55,12 @@ class JobListing(BaseModel):
     preferred_skills: List[str] = Field(default_factory=list)
     experience_required: str = "0-1 years"
     responsibilities: List[str] = Field(default_factory=list)
+    job_url: Optional[str] = None
+    application_url: Optional[str] = None
+    career_page_url: Optional[str] = None
+    source: Optional[str] = None
+    posted_at: Optional[str] = None
+    discovered_at: Optional[str] = None
 
 
 class ParsedJD(BaseModel):
@@ -96,7 +102,7 @@ class TailoredMaterials(BaseModel):
 # ─── Human-in-the-Loop & Tracker ───────────────────────────────────────────────
 
 class PreparedApplication(BaseModel):
-    """Application bundle waiting for Human Approval (HITL)"""
+    """Application bundle waiting for candidate review"""
     application_id: str
     job_id: str
     company: str
@@ -106,8 +112,12 @@ class PreparedApplication(BaseModel):
     missing_skills: List[str]
     tailored_resume_summary: str
     tailored_cover_letter: str
-    status: Literal["Prepared", "Approved", "Submitted", "Skipped", "Handoff"] = "Prepared"
+    status: Literal["DISCOVERED", "SAVED", "VIEWED", "APPLIED", "NOT_APPLIED", "INTERVIEW", "OFFER", "REJECTED", "REMOVED"] = "DISCOVERED"
     created_at: str
+    job_url: Optional[str] = None
+    application_url: Optional[str] = None
+    career_page_url: Optional[str] = None
+    source: Optional[str] = None
 
 
 class FormQuestion(BaseModel):
@@ -125,10 +135,11 @@ class FormMappingResponse(BaseModel):
 
 
 class SubmitApplicationRequest(BaseModel):
-    """Payload sent when user clicks [Apply] or [Skip]"""
+    """Payload sent when candidate explicitly updates job status"""
     application_id: str
-    action: Literal["approved", "skipped"]
+    action: Literal["mark_applied", "mark_not_applied", "save", "remove", "skipped"]
     notes: Optional[str] = None
+    reason: Optional[str] = None
     mapped_fields: Optional[Dict[str, str]] = None
 
 
@@ -139,13 +150,19 @@ class ApplicationRecord(BaseModel):
     company: str
     role_title: str
     match_score: int
-    status: Literal["Saved", "Analyzed", "Prepared", "Approved", "Submitted", "Interview", "Offer", "Rejected", "Skipped", "Handoff"]
+    status: Literal["DISCOVERED", "SAVED", "VIEWED", "APPLIED", "NOT_APPLIED", "INTERVIEW", "OFFER", "REJECTED", "REMOVED"]
     updated_at: str
     cover_letter_snippet: Optional[str] = None
     submission_channel: Optional[str] = None
     pdf_resume_version: Optional[str] = None
     submitted_at: Optional[str] = None
-    mapped_answers_supplied: Optional[Dict[str, str]] = None
+    applied_at: Optional[str] = None
+    not_applied_at: Optional[str] = None
+    not_applied_reason: Optional[str] = None
+    job_url: Optional[str] = None
+    application_url: Optional[str] = None
+    career_page_url: Optional[str] = None
+    source: Optional[str] = None
 
 
 

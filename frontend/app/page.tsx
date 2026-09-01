@@ -1,23 +1,23 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getApplications, type ApplicationRecord } from "@/lib/api";
 
 const PIPELINE_STEPS = [
-  { label: "Discover", desc: "Find relevant jobs" },
-  { label: "Analyze", desc: "JD fit scoring" },
+  { label: "Discover", desc: "Multi-source web search" },
+  { label: "Analyze", desc: "Gemini AI fit scoring" },
   { label: "Match", desc: "Resume alignment" },
-  { label: "Prepare", desc: "Tailored materials" },
-  { label: "Review", desc: "HITL approval" },
-  { label: "Submit", desc: "Apply safely" },
+  { label: "Rank", desc: "Freshness sorting" },
+  { label: "Explore", desc: "Open real job URLs" },
+  { label: "Track", desc: "Candidate-confirmed APPLIED" },
 ];
 
 const FEATURE_CARDS = [
   {
     num: "01",
-    title: "Job Search Agent",
-    desc: "Discovers, filters, and ranks jobs matching your target background and location.",
+    title: "Web-Wide Job Discovery",
+    desc: "Discovers and ranks job postings across ATS portals, company career sites, and public job boards.",
     accent: "#3b82f6",
   },
   {
@@ -34,8 +34,8 @@ const FEATURE_CARDS = [
   },
   {
     num: "04",
-    title: "Human-in-the-Loop",
-    desc: "Safety-first: AI prepares applications, but only an explicit [Apply] click submits them.",
+    title: "Candidate-Controlled Tracking",
+    desc: "JobSetu opens the real external application site for you to apply, and you explicitly confirm your status.",
     accent: "#f59e0b",
   },
 ];
@@ -48,18 +48,18 @@ export default function OverviewPage() {
   }, []);
 
   const totalApps = apps.length;
-  const pending = apps.filter((a) => a.status === "Prepared").length;
-  const submitted = apps.filter((a) => a.status === "Submitted" || a.status === "Handoff").length;
+  const appliedCount = apps.filter((a) => a.status === "APPLIED").length;
+  const savedCount = apps.filter((a) => a.status === "SAVED").length;
   const avgScore =
     apps.length > 0
       ? Math.round(apps.reduce((sum, a) => sum + (a.match_score || 0), 0) / apps.length)
       : 0;
 
   const kpiCards = [
-    { label: "Tracked Applications", value: totalApps, sub: "Total in database", color: "#93c5fd", accent: "rgba(59,130,246,0.15)" },
-    { label: "Pending HITL Review", value: pending, sub: "Awaiting your approval", color: "#fde047", accent: "rgba(251,191,36,0.12)" },
-    { label: "Successfully Submitted", value: submitted, sub: "Sent to employers", color: "#86efac", accent: "rgba(34,197,94,0.12)" },
-    { label: "Avg. Match Score", value: apps.length > 0 ? `${avgScore}%` : "--", sub: "Across all applications", color: "#c084fc", accent: "rgba(168,85,247,0.12)" },
+    { label: "Tracked Applications", value: totalApps, sub: "Total in tracker database", color: "#93c5fd", accent: "rgba(59,130,246,0.15)" },
+    { label: "Shortlisted / Saved", value: savedCount, sub: "Saved for candidate application", color: "#fde047", accent: "rgba(251,191,36,0.12)" },
+    { label: "Confirmed Applied", value: appliedCount, sub: "Explicitly marked by candidate", color: "#86efac", accent: "rgba(34,197,94,0.12)" },
+    { label: "Avg. Match Score", value: apps.length > 0 ? `${avgScore}%` : "--", sub: "Across all discoveries", color: "#c084fc", accent: "rgba(168,85,247,0.12)" },
   ];
 
   return (
@@ -73,19 +73,18 @@ export default function OverviewPage() {
           style={{ maxWidth: 280, height: "auto", marginBottom: 20, display: "block", margin: "0 auto 20px" }}
         />
         <p style={{ fontSize: 16, color: "#60a5fa", margin: "0 0 12px", fontWeight: 600 }}>
-          Your AI-Powered Job Search & Application Agent
+          Web-Wide Job Discovery Engine &amp; Application Assistant
         </p>
         <p style={{ fontSize: 14, color: "#64748b", maxWidth: 680, margin: "0 auto 28px", lineHeight: 1.7 }}>
-          An agentic AI platform that discovers relevant jobs, evaluates resume fit via deterministic scoring,
-          generates non-hallucinated tailored materials, and prepares applications for{" "}
-          <strong style={{ color: "#93c5fd" }}>Human-Approved Submission</strong>.
+          An AI-powered web-wide job search engine that discovers real job openings across the public web,
+          ranks them using your candidate profile, provides exact original URLs, and lets you personally apply.
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: 14 }}>
           <Link
-            href="/chat"
+            href="/career-intelligence"
             style={{ padding: "12px 26px", background: "#2563eb", color: "#fff", borderRadius: 9, fontWeight: 700, textDecoration: "none", fontSize: 14, boxShadow: "0 4px 16px rgba(37,99,235,0.35)" }}
           >
-            Launch AI Agent Chat
+            Launch Web Job Discovery Engine
           </Link>
           <Link
             href="/match"
@@ -133,18 +132,18 @@ export default function OverviewPage() {
                 {/* Circle */}
                 <div style={{
                   width: 36, height: 36, borderRadius: "50%",
-                  background: i < submitted + 1 ? "rgba(59,130,246,0.25)" : "rgba(30,41,59,1)",
-                  border: `2px solid ${i < submitted + 1 ? "#3b82f6" : "rgba(255,255,255,0.1)"}`,
+                  background: i < appliedCount + 1 ? "rgba(59,130,246,0.25)" : "rgba(30,41,59,1)",
+                  border: `2px solid ${i < appliedCount + 1 ? "#3b82f6" : "rgba(255,255,255,0.1)"}`,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 13, fontWeight: 800,
-                  color: i < submitted + 1 ? "#93c5fd" : "#475569",
+                  color: i < appliedCount + 1 ? "#93c5fd" : "#475569",
                   zIndex: 1, position: "relative",
-                  boxShadow: i < submitted + 1 ? "0 0 12px rgba(59,130,246,0.3)" : "none",
+                  boxShadow: i < appliedCount + 1 ? "0 0 12px rgba(59,130,246,0.3)" : "none",
                 }}>
                   {i + 1}
                 </div>
                 <div style={{ marginTop: 10, textAlign: "center" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: i < submitted + 1 ? "#e2e8f0" : "#475569" }}>{step.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: i < appliedCount + 1 ? "#e2e8f0" : "#475569" }}>{step.label}</div>
                   <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>{step.desc}</div>
                 </div>
               </div>
@@ -152,7 +151,7 @@ export default function OverviewPage() {
               {i < PIPELINE_STEPS.length - 1 && (
                 <div style={{
                   flex: "0 0 auto", width: 40, height: 2, marginTop: 17,
-                  background: i < submitted ? "#3b82f6" : "rgba(255,255,255,0.08)",
+                  background: i < appliedCount ? "#3b82f6" : "rgba(255,255,255,0.08)",
                 }} />
               )}
             </div>

@@ -112,7 +112,11 @@ class TrackerService:
         matched_skills: List[str],
         missing_skills: List[str],
         summary: str,
-        cover_letter: str
+        cover_letter: str,
+        job_url: Optional[str] = None,
+        application_url: Optional[str] = None,
+        career_page_url: Optional[str] = None,
+        source: Optional[str] = None
     ) -> PreparedApplication:
         app_id = f"app-{job_id.replace('job-', '')}-{int(datetime.now().timestamp())}"
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -127,9 +131,13 @@ class TrackerService:
             "missing_skills": missing_skills,
             "tailored_resume_summary": summary,
             "tailored_cover_letter": cover_letter,
-            "status": "Prepared",
+            "status": "DISCOVERED",
             "created_at": now_str,
-            "updated_at": now_str
+            "updated_at": now_str,
+            "job_url": job_url,
+            "application_url": application_url,
+            "career_page_url": career_page_url,
+            "source": source
         }
 
         self.applications[app_id] = app_record
@@ -145,15 +153,20 @@ class TrackerService:
             missing_skills=missing_skills,
             tailored_resume_summary=summary,
             tailored_cover_letter=cover_letter,
-            status="Prepared",
-            created_at=now_str
+            status="DISCOVERED",
+            created_at=now_str,
+            job_url=job_url,
+            application_url=application_url,
+            career_page_url=career_page_url,
+            source=source
         )
 
-    def submit_application(
+    def update_application_status(
         self,
         application_id: str,
         action: str,
         notes: Optional[str] = None,
+        reason: Optional[str] = None,
         submission_channel: Optional[str] = None,
         pdf_resume_version: Optional[str] = None,
         submitted_at: Optional[str] = None,
@@ -165,12 +178,22 @@ class TrackerService:
         app = self.applications[application_id]
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        if action == "approved":
-            app["status"] = "Submitted"
-        elif action == "skipped":
-            app["status"] = "Skipped"
+        if action == "mark_applied":
+            app["status"] = "APPLIED"
+            app["applied_at"] = now_str
+            app["confirmation"] = "user"
+        elif action == "mark_not_applied":
+            app["status"] = "NOT_APPLIED"
+            app["not_applied_at"] = now_str
+            if reason:
+                app["not_applied_reason"] = reason
+        elif action == "save":
+            app["status"] = "SAVED"
+        elif action == "remove":
+            app["status"] = "REMOVED"
+            app["removed_at"] = now_str
         else:
-            app["status"] = action.title()
+            app["status"] = action.upper() if action in ["DISCOVERED", "SAVED", "VIEWED", "APPLIED", "NOT_APPLIED", "INTERVIEW", "OFFER", "REJECTED", "REMOVED"] else action.title()
 
         app["updated_at"] = now_str
         if notes:
@@ -190,7 +213,13 @@ class TrackerService:
 
     def list_applications(self) -> List[ApplicationRecord]:
         records = []
+        VALID_STATUSES = {"DISCOVERED", "SAVED", "VIEWED", "APPLIED", "NOT_APPLIED", "INTERVIEW", "OFFER", "REJECTED", "REMOVED"}
         for app in self.applications.values():
+            st = str(app.get("status", "DISCOVERED")).upper()
+            if st not in VALID_STATUSES:
+                st = "DISCOVERED"
+            if st == "REMOVED":
+                continue
             records.append(
                 ApplicationRecord(
                     application_id=app["application_id"],
@@ -198,13 +227,19 @@ class TrackerService:
                     company=app["company"],
                     role_title=app["role_title"],
                     match_score=app.get("match_score", 0),
-                    status=app["status"],
+                    status=st,
                     updated_at=app.get("updated_at", app.get("created_at", "")),
                     cover_letter_snippet=app.get("tailored_cover_letter", "")[:150],
                     submission_channel=app.get("submission_channel"),
                     pdf_resume_version=app.get("pdf_resume_version"),
                     submitted_at=app.get("submitted_at"),
-                    mapped_answers_supplied=app.get("mapped_answers_supplied")
+                    applied_at=app.get("applied_at"),
+                    not_applied_at=app.get("not_applied_at"),
+                    not_applied_reason=app.get("not_applied_reason"),
+                    job_url=app.get("job_url"),
+                    application_url=app.get("application_url"),
+                    career_page_url=app.get("career_page_url"),
+                    source=app.get("source")
                 )
             )
         records.sort(key=lambda x: x.updated_at, reverse=True)

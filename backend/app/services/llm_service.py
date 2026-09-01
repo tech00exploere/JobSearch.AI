@@ -189,3 +189,45 @@ Synthesize this information in clean markdown. Highlight the job details, match 
         model="JobSearch.ai-Agent-v1"
     )
 
+
+def analyze_job_with_llm(description: str, title: str = "") -> dict:
+    """
+    Analyze a job description using Gemini AI (if configured) to extract
+    required skills, match fit explanation, and key responsibilities.
+    Falls back to deterministic parsing when Gemini is unavailable.
+    """
+    if genai_model and description:
+        try:
+            prompt = (
+                f"You are an AI career assistant. Analyze the following job description and return a "
+                f"structured JSON with keys: required_skills (list), preferred_skills (list), "
+                f"experience_required (str), key_responsibilities (list), summary_reasoning (str).\n\n"
+                f"Job Title: {title}\n\nJob Description:\n{description[:4000]}"
+            )
+            resp = genai_model.generate_content(prompt)
+            import json as _json
+            text = resp.text.strip().strip('').lstrip('json').strip()
+            return _json.loads(text)
+        except Exception as e:
+            return {
+                "required_skills": [],
+                "preferred_skills": [],
+                "experience_required": "0-2 years",
+                "key_responsibilities": [],
+                "summary_reasoning": f"Gemini analysis unavailable: {str(e)}"
+            }
+
+    import re
+    skills_found = re.findall(
+        r"\b(Python|FastAPI|React|Node\.js|TypeScript|JavaScript|Java|Go|Rust|MongoDB|PostgreSQL|MySQL|Redis|Docker|Kubernetes|AWS|GCP|Azure|REST|GraphQL)\b",
+        description or "",
+        re.IGNORECASE
+    )
+    unique_skills = list(dict.fromkeys([s.title() for s in skills_found]))
+    return {
+        "required_skills": unique_skills[:6],
+        "preferred_skills": unique_skills[6:10],
+        "experience_required": "0-2 years",
+        "key_responsibilities": ["Build and maintain scalable software systems"],
+        "summary_reasoning": f"Extracted {len(unique_skills)} skills from job description. Gemini API key not configured."
+    }

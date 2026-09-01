@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import health, chat, model, jobs
+from app.routes import health, chat, model, jobs, career_scans, discovered_jobs, job_discovery
 
 app = FastAPI(
     title="JobSearch.ai API",
@@ -39,6 +39,9 @@ app.include_router(health.router, prefix="/api", tags=["Health"])
 app.include_router(chat.router, prefix="/api", tags=["Agent Chat"])
 app.include_router(jobs.router, prefix="/api", tags=["Jobs & Applications"])
 app.include_router(model.router, prefix="/api", tags=["Agent Metadata"])
+app.include_router(career_scans.router, prefix="/api", tags=["Career Scans"])
+app.include_router(discovered_jobs.router, prefix="/api", tags=["Discovered Jobs"])
+app.include_router(job_discovery.router, prefix="/api", tags=["Web Job Discovery"])
 
 
 @app.get("/", tags=["Root"])

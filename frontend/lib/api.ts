@@ -55,8 +55,12 @@ export interface PreparedApplication {
   missing_skills: string[];
   tailored_resume_summary: string;
   tailored_cover_letter: string;
-  status: "Prepared" | "Approved" | "Submitted" | "Skipped" | "Handoff";
+  status: "DISCOVERED" | "VIEWED" | "SAVED" | "PREPARED" | "APPLYING" | "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER" | "Prepared" | "Approved" | "Submitted" | "Skipped" | "Handoff";
   created_at: string;
+  job_url?: string;
+  application_url?: string;
+  career_page_url?: string;
+  source?: string;
 }
 
 export interface ApplicationRecord {
@@ -65,9 +69,13 @@ export interface ApplicationRecord {
   company: string;
   role_title: string;
   match_score: number;
-  status: "Saved" | "Analyzed" | "Prepared" | "Approved" | "Submitted" | "Interview" | "Offer" | "Rejected" | "Skipped" | "Handoff";
+  status: "DISCOVERED" | "VIEWED" | "SAVED" | "PREPARED" | "APPLYING" | "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER" | "Saved" | "Analyzed" | "Prepared" | "Approved" | "Submitted" | "Interview" | "Offer" | "Rejected" | "Skipped" | "Handoff";
   updated_at: string;
   cover_letter_snippet?: string;
+  job_url?: string;
+  application_url?: string;
+  career_page_url?: string;
+  source?: string;
 }
 
 export interface HealthResponse {
@@ -197,4 +205,75 @@ export async function uploadResumeFile(file: File): Promise<any> {
 /** Returns the direct URL for viewing/downloading the stored resume PDF */
 export function getResumePdfUrl(): string {
   return `${API_BASE}/resume/pdf`;
+}
+
+export interface DiscoveredJob {
+  id: string;
+  external_id?: string;
+  company: string;
+  title: string;
+  location: string;
+  description: string;
+  job_url?: string;
+  application_url?: string;
+  career_page_url?: string;
+  source: string;
+  source_type?: string;
+  sources?: string[];
+  remote?: boolean;
+  employment_type?: string;
+  experience_level?: string;
+  posted_at?: string;
+  discovered_at?: string;
+  fingerprint?: string;
+  skills?: string[];
+  match_score?: number;
+  status?: string;
+}
+
+export async function searchDiscoveredJobs(criteria: Record<string, any>): Promise<{ status: string; count: number; jobs: DiscoveredJob[] }> {
+  return apiFetch("/job-discovery/search", {
+    method: "POST",
+    body: JSON.stringify(criteria),
+  });
+}
+
+export async function getDiscoveredJobs(params?: { role?: string; location?: string; remote?: boolean }): Promise<{ count: number; jobs: DiscoveredJob[]; source: string }> {
+  const query = new URLSearchParams();
+  if (params?.role) query.append("role", params.role);
+  if (params?.location) query.append("location", params.location);
+  if (params?.remote !== undefined) query.append("remote", String(params.remote));
+  return apiFetch(`/discovered-jobs?${query.toString()}`);
+}
+
+export async function matchDiscoveredJob(id: string): Promise<any> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}/match`, { method: "POST" });
+}
+
+export async function analyzeDiscoveredJob(id: string): Promise<any> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}/analyze`, { method: "POST" });
+}
+
+export async function saveDiscoveredJob(id: string): Promise<{ status: string; application: any }> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}/save`, { method: "POST" });
+}
+
+export async function markJobApplied(id: string, notes?: string): Promise<any> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}/mark-applied`, {
+    method: "POST",
+    body: JSON.stringify(notes || ""),
+  });
+}
+
+export async function markJobNotApplied(id: string, reason?: string): Promise<any> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}/mark-not-applied`, {
+    method: "POST",
+    body: JSON.stringify({ reason: reason || "Not interested" }),
+  });
+}
+
+export async function removeDiscoveredJob(id: string): Promise<any> {
+  return apiFetch(`/discovered-jobs/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 }

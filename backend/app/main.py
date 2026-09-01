@@ -15,20 +15,23 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Always allow localhost for development
+# Always allow localhost & Vercel deployments for development and production
 ALLOW_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
-# Add production frontend URL if set (e.g. https://jobsearch.vercel.app)
 frontend_url = os.getenv("FRONTEND_URL", "")
 if frontend_url:
-    ALLOW_ORIGINS.append(frontend_url.rstrip("/"))
+    for url in frontend_url.split(","):
+        cleaned = url.strip().rstrip("/")
+        if cleaned and cleaned not in ALLOW_ORIGINS:
+            ALLOW_ORIGINS.append(cleaned)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOW_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

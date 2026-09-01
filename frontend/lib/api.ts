@@ -207,6 +207,20 @@ export function getResumePdfUrl(): string {
   return `${API_BASE}/resume/pdf`;
 }
 
+export interface SourceDiagnostic {
+  name: string;
+  status: "ok" | "warning" | "error" | "unavailable";
+  capability: string;
+  jobs_retrieved: number;
+  error_message?: string;
+}
+
+export interface DiscoveryDiagnostics {
+  total_discovered: number;
+  after_deduplication: number;
+  sources: SourceDiagnostic[];
+}
+
 export interface DiscoveredJob {
   id: string;
   external_id?: string;
@@ -216,6 +230,7 @@ export interface DiscoveredJob {
   description: string;
   job_url?: string;
   application_url?: string;
+  source_url?: string;
   career_page_url?: string;
   source: string;
   source_type?: string;
@@ -231,7 +246,13 @@ export interface DiscoveredJob {
   status?: string;
 }
 
-export async function searchDiscoveredJobs(criteria: Record<string, any>): Promise<{ status: string; count: number; jobs: DiscoveredJob[] }> {
+export async function searchDiscoveredJobs(criteria: Record<string, any>): Promise<{
+  status: string;
+  count: number;
+  jobs: DiscoveredJob[];
+  diagnostics?: DiscoveryDiagnostics;
+  source?: string;
+}> {
   return apiFetch("/job-discovery/search", {
     method: "POST",
     body: JSON.stringify(criteria),

@@ -12,19 +12,21 @@ from app.db.mongo_client import get_database
 
 router = APIRouter()
 
-@router.post("/job-discovery/search", summary="Search/Discover public web jobs across sources")
+@router.post("/job-discovery/search", summary="Search/Discover public web jobs across sources with diagnostics")
 async def search_and_discover_jobs(criteria: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
     """
-    Executes Web-Wide Public Job Discovery across company career sites, ATS platforms,
-    and public web discovery engine. Normalizes, deduplicates, and ranks jobs.
+    Executes Web-Wide Public Job Discovery across job platforms, company career sites,
+    ATS portals, and generic web search. Normalizes, deduplicates, ranks jobs, and returns diagnostics.
     """
-    jobs = await orchestrator.execute_web_discovery(criteria)
+    jobs, diagnostics = await orchestrator.execute_web_discovery_with_diagnostics(criteria)
     # Filter out REMOVED jobs
     active_jobs = [j for j in jobs if getattr(j, "status", None) != "REMOVED"]
     return {
         "status": "success",
         "count": len(active_jobs),
-        "jobs": active_jobs
+        "jobs": active_jobs,
+        "diagnostics": diagnostics.dict(),
+        "source": "web_discovery"
     }
 
 @router.get("/discovered-jobs", summary="Get discovered public job listings")

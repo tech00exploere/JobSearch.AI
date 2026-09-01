@@ -161,6 +161,7 @@ class ApplicationRecord(BaseModel):
     not_applied_reason: Optional[str] = None
     job_url: Optional[str] = None
     application_url: Optional[str] = None
+    source_url: Optional[str] = None
     career_page_url: Optional[str] = None
     source: Optional[str] = None
 

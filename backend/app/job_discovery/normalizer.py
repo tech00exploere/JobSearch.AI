@@ -1,5 +1,4 @@
 import hashlib
-import uuid
 from typing import List, Optional
 from app.schemas.discovered_job import RawJob, NormalizedJob
 from app.job_discovery.url_validator import validate_url
@@ -18,12 +17,13 @@ def normalize_job(raw: RawJob) -> NormalizedJob:
     """Standardizes a RawJob into a NormalizedJob model."""
     valid_job_url = validate_url(raw.job_url or raw.url)
     valid_app_url = resolve_application_url(raw)
+    valid_source_url = validate_url(raw.source_url)
     valid_career_url = validate_url(raw.career_page_url)
 
     loc = raw.location or ""
     is_remote = any(term in loc.lower() for term in ["remote", "work from home", "wfh"])
 
-    fp = compute_fingerprint(raw.company, raw.title, loc, valid_job_url)
+    fp = compute_fingerprint(raw.company, raw.title, loc, valid_job_url or valid_source_url)
     job_id = raw.id or f"job-{fp[:12]}"
 
     source_name = raw.source or "generic"
@@ -38,6 +38,7 @@ def normalize_job(raw: RawJob) -> NormalizedJob:
         description=raw.description,
         job_url=valid_job_url,
         application_url=valid_app_url,
+        source_url=valid_source_url,
         career_page_url=valid_career_url,
         source=source_name,
         source_type=raw.source_type or "api",

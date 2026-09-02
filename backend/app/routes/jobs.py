@@ -262,7 +262,7 @@ async def upload_and_parse_resume(
                 f.write(content)
 
         # 2. Parse using Affinda (send raw bytes directly — Affinda handles PDF + TXT natively)
-        parsed_data = await resume_parser_service.parse_resume_bytes(content, filename=filename)
+        parsed_data = resume_parser_service.parse_resume_bytes(content, filename=filename)
 
         # 3. Save parsed profile to this user's isolated record in MongoDB
         auth_service.save_user_resume_profile(current_user, parsed_data)

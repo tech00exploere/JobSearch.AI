@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMasterResume, updateMasterResume, uploadResumeFile } from "@/lib/api";
+import { getMasterResume, updateMasterResume, uploadResumeFile, getResumePdfUrl } from "@/lib/api";
 
 interface PersonalInfo {
   name: string;
@@ -106,8 +106,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile();
-    // Check if a PDF is already stored on the server
-    fetch("http://localhost:8000/api/resume/pdf", { method: "HEAD" })
+    // Check if a PDF is already stored on the server using the correct API URL
+    fetch(getResumePdfUrl(), { method: "GET", credentials: "include" })
       .then((r) => { if (r.ok) setPdfStored(true); })
       .catch(() => {});
   }, []);
@@ -290,7 +290,7 @@ export default function ProfilePage() {
           <div style={{ display: "flex", gap: 10, flexShrink: 0, flexWrap: "wrap" }}>
             {pdfStored && (
               <a
-                href="http://localhost:8000/api/resume/pdf"
+                href={getResumePdfUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

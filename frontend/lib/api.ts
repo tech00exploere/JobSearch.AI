@@ -199,8 +199,16 @@ export async function uploadResumeFile(file: File): Promise<any> {
   const formData = new FormData();
   formData.append("file", file);
 
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = sessionStorage.getItem("jobsearch_session_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_BASE}/resume/upload`, {
     method: "POST",
+    credentials: "include",
+    headers,
     body: formData,
   });
 

@@ -6,7 +6,7 @@ HITL Application Preparation/Approval, and Tracker DB logging.
 """
 
 import os
-from fastapi import APIRouter, HTTPException, Query, UploadFile, File
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Depends
 from fastapi.responses import FileResponse
 from typing import List, Optional, Dict, Any
 from app.models.schemas import (
@@ -21,6 +21,9 @@ from app.services.matching_service import matching_service
 from app.services.tracker_service import tracker_service
 from app.rag.resume_rag import resume_rag_engine
 from app.services.resume_parser_service import resume_parser_service
+from app.auth.schemas import SessionUser
+from app.auth.dependencies import get_current_user_optional
+from app.auth import service as auth_service
 
 router = APIRouter()
 
@@ -197,15 +200,21 @@ async def clear_applications() -> Dict[str, Any]:
 
 
 @router.get("/resume", summary="Get candidate master resume profile")
-async def get_master_resume() -> Dict[str, Any]:
-    """Retrieve master resume profile used for RAG grounding"""
-    return resume_rag_engine.get_full_resume()
+async def get_master_resume(
+    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+) -> Dict[str, Any]:
+    """Retrieve candidate master resume profile (isolated per user in MongoDB)"""
+    return auth_service.get_user_resume_profile(current_user)
 
 
 @router.put("/resume", summary="Update candidate master resume profile")
-async def update_master_resume(new_resume: Dict[str, Any]) -> Dict[str, Any]:
-    """Update master resume profile and re-index the RAG engine"""
+async def update_master_resume(
+    new_resume: Dict[str, Any],
+    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+) -> Dict[str, Any]:
+    """Update candidate master resume profile for this user and re-index RAG engine"""
     try:
+        auth_service.save_user_resume_profile(current_user, new_resume)
         resume_rag_engine.update_resume(new_resume)
         return {"status": "success", "message": "Resume updated and re-indexed successfully"}
     except Exception as e:
@@ -213,7 +222,9 @@ async def update_master_resume(new_resume: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @router.get("/resume/pdf", summary="Download the stored candidate resume PDF")
-async def get_resume_pdf():
+async def get_resume_pdf(
+    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+):
     """Serve the stored resume PDF file for download/preview"""
     if not os.path.exists(RESUME_PDF_PATH):
         raise HTTPException(status_code=404, detail="No resume PDF has been uploaded yet.")
@@ -226,8 +237,11 @@ async def get_resume_pdf():
 
 
 @router.post("/resume/upload", summary="Upload a resume file and parse it using Affinda AI")
-async def upload_and_parse_resume(file: UploadFile = File(...)) -> Dict[str, Any]:
-    """Upload PDF or text resume, parse into master resume JSON schema via Affinda, save PDF, and update RAG index"""
+async def upload_and_parse_resume(
+    file: UploadFile = File(...),
+    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+) -> Dict[str, Any]:
+    """Upload PDF or text resume, parse into master resume JSON schema via Affinda, save to user's MongoDB profile, and update RAG index"""
     try:
         content = await file.read()
         filename = (file.filename or "resume.pdf").lower()
@@ -248,20 +262,24 @@ async def upload_and_parse_resume(file: UploadFile = File(...)) -> Dict[str, Any
                 f.write(content)
 
         # 2. Parse using Affinda (send raw bytes directly — Affinda handles PDF + TXT natively)
-        parsed_resume = resume_parser_service.parse_resume_bytes(content, filename=filename)
+        parsed_data = await resume_parser_service.parse_resume_bytes(content, filename=filename)
 
-        # 3. Save the parsed resume JSON and update RAG index
-        resume_rag_engine.update_resume(parsed_resume)
+        # 3. Save parsed profile to this user's isolated record in MongoDB
+        auth_service.save_user_resume_profile(current_user, parsed_data)
+
+        # 4. Update the in-memory RAG engine
+        resume_rag_engine.update_resume(parsed_data)
 
         return {
             "status": "success",
-            "message": "Resume uploaded, parsed by Affinda AI, and saved!",
-            "pdf_stored": filename.endswith(".pdf"),
-            "parsed_data": parsed_resume,
+            "message": f"Resume parsed successfully via Affinda AI from {filename} and saved to your profile.",
+            "parsed_data": parsed_data,
+            "pdf_stored": filename.endswith(".pdf")
         }
     except HTTPException:
         raise
-    except ValueError as val_err:
-        raise HTTPException(status_code=400, detail=str(val_err))
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to process resume: {str(exc)}")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process and parse resume file: {str(e)}"
+        )

@@ -1,20 +1,16 @@
 import re
 import sys
 import os
-import torch
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from app.models.schemas import ParsedJD, JobMatchResult, TailoredMaterials
 from app.rag.resume_rag import resume_rag_engine
 
 # ── Resolve ml/ package path ──────────────────────────────────────────────────
-# Works in two layouts:
-#   Local dev:  <repo>/backend/app/services/matching_service.py  -> ml/ is 3 dirs up
-#   Docker:     /app/backend/app/services/matching_service.py    -> ml/ is 2 dirs up (/app/ml/)
 _this_dir = os.path.dirname(os.path.abspath(__file__))
 for _candidate in [
-    os.path.abspath(os.path.join(_this_dir, "../../../")),   # local dev
-    os.path.abspath(os.path.join(_this_dir, "../../../../")), # Docker /app/backend/...
-    os.path.abspath(os.path.join(_this_dir, "../../../../../../")), # fallback
+    os.path.abspath(os.path.join(_this_dir, "../../../")),
+    os.path.abspath(os.path.join(_this_dir, "../../../../")),
+    os.path.abspath(os.path.join(_this_dir, "../../../../../../")),
 ]:
     if os.path.isdir(os.path.join(_candidate, "ml")):
         root_dir = _candidate
@@ -25,24 +21,39 @@ else:
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
 
-from ml.model.job_matcher_nn import JobMatcherNN
+
+def _try_load_pytorch_model() -> Optional[Any]:
+    """
+    Lazily attempt to import torch and load the neural matcher model.
+    Returns None silently if torch is not installed or OOM risk is detected.
+    This is an OPTIONAL enhancement — core deterministic matching never depends on it.
+    """
+    checkpoint_path = os.path.join(root_dir, "ml", "checkpoints", "matcher_model.pt")
+    if not os.path.exists(checkpoint_path):
+        return None
+
+    try:
+        import torch  # Lazy import — NOT at module level
+        from ml.model.job_matcher_nn import JobMatcherNN
+
+        model = JobMatcherNN()
+        checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        model.eval()
+        print("[MatchingService] PyTorch Matcher Model loaded successfully (optional enhancement).")
+        return model
+    except ImportError:
+        print("[MatchingService] torch not installed — running deterministic-only matching (expected in production).")
+        return None
+    except Exception as err:
+        print(f"[MatchingService] PyTorch model load skipped: {err}")
+        return None
 
 
 class MatchingService:
     def __init__(self):
         self.rag = resume_rag_engine
-        self.pytorch_model = None
-
-        checkpoint_path = os.path.join(root_dir, "ml", "checkpoints", "matcher_model.pt")
-        if os.path.exists(checkpoint_path):
-            try:
-                self.pytorch_model = JobMatcherNN()
-                checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
-                self.pytorch_model.load_state_dict(checkpoint["model_state_dict"])
-                self.pytorch_model.eval()
-                print("PyTorch Matcher Model loaded successfully!")
-            except Exception as err:
-                print(f"Failed to load PyTorch Matcher Model: {err}")
+        self.pytorch_model = _try_load_pytorch_model()
 
     def analyze_job_description(self, jd_text: str) -> ParsedJD:
         """
@@ -51,7 +62,6 @@ class MatchingService:
         """
         lower_jd = jd_text.lower()
 
-        # Skill dictionary for deterministic extraction
         known_skills = [
             "react.js", "react", "next.js", "node.js", "express.js", "javascript",
             "typescript", "python", "fastapi", "pytorch", "rag", "rest apis",
@@ -63,9 +73,8 @@ class MatchingService:
         for skill in known_skills:
             pattern = r"\b" + re.escape(skill) + r"\b"
             if re.search(pattern, lower_jd):
-                # Standardize display name
-                display_name = skill.replace(".js", ".js").title()
-                if skill == "react" or skill == "react.js":
+                display_name = skill.title()
+                if skill in ("react", "react.js"):
                     display_name = "React.js"
                 elif skill == "next.js":
                     display_name = "Next.js"
@@ -77,11 +86,11 @@ class MatchingService:
                     display_name = "PyTorch"
                 elif skill == "rag":
                     display_name = "RAG"
-                elif skill == "rest apis" or skill == "rest api":
+                elif skill in ("rest apis", "rest api"):
                     display_name = "REST APIs"
                 elif skill == "mongodb":
                     display_name = "MongoDB"
-                elif skill == "postgresql" or skill == "sql":
+                elif skill in ("postgresql", "sql"):
                     display_name = "PostgreSQL / SQL"
                 elif skill == "typescript":
                     display_name = "TypeScript"
@@ -94,14 +103,12 @@ class MatchingService:
         if not extracted_required:
             extracted_required = ["React.js", "Node.js", "JavaScript", "REST APIs"]
 
-        # Infer experience level
         exp_req = "0-1 years"
         if "1-2" in lower_jd or "2 years" in lower_jd or "senior" in lower_jd:
             exp_req = "1-2 years"
         elif "3+" in lower_jd or "5+" in lower_jd:
             exp_req = "3+ years"
 
-        # Infer role title
         role_title = "Software Engineer"
         if "intern" in lower_jd:
             role_title = "Software Engineer Intern"
@@ -129,13 +136,13 @@ class MatchingService:
         """
         Calculates a deterministic fit score based on master resume skill coverage.
         Score = (Matched Required Skills / Total Required Skills) * 85% + Base Fit 15%.
+        PyTorch blending is optional and only used if model is loaded.
         """
         resume = self.rag.get_full_resume()
         all_candidate_skills = []
         for cat_skills in resume.get("skills", {}).values():
             all_candidate_skills.extend([s.lower() for s in cat_skills])
 
-        # Add tech stack from projects
         for proj in resume.get("projects", []):
             all_candidate_skills.extend([t.lower() for t in proj.get("technologies", [])])
 
@@ -144,11 +151,7 @@ class MatchingService:
 
         for req in required_skills:
             req_lower = req.lower().replace(".js", "").replace(" / sql", "").strip()
-            found = False
-            for cand in all_candidate_skills:
-                if req_lower in cand or cand in req_lower:
-                    found = True
-                    break
+            found = any(req_lower in cand or cand in req_lower for cand in all_candidate_skills)
             if found:
                 matched_skills.append(req)
             else:
@@ -156,45 +159,43 @@ class MatchingService:
 
         total_req = max(len(required_skills), 1)
         skill_coverage_pct = int((len(matched_skills) / total_req) * 100)
-        
-        # Deterministic formula: 85% skill coverage weight + 15% foundational baseline
         overall_match = min(100, max(40, int(skill_coverage_pct * 0.85 + 15)))
 
-        # Blend with PyTorch NN model predictions if available
+        # Optional PyTorch blending (only if model loaded, never required)
         pytorch_score = None
         if self.pytorch_model is not None:
             try:
-                # Experience difference feature
+                import torch  # Lazy import
                 req_exp = 1.0
                 if "1-2" in role_title.lower() or "2 years" in role_title.lower():
                     req_exp = 2.0
                 elif "3+" in role_title.lower() or "5+" in role_title.lower():
                     req_exp = 4.0
-                
-                exp_diff = 1.0 - req_exp # Candidate has 1.0 yr from internship exp
-                
+
+                exp_diff = 1.0 - req_exp
                 features = torch.tensor([[
                     float(skill_coverage_pct / 100.0),
                     float(exp_diff),
                     float(skill_coverage_pct / 100.0),
-                    1.0  # Education matches B.Tech CSE
+                    1.0
                 ]], dtype=torch.float32)
-                
+
                 with torch.no_grad():
                     output_tensor = self.pytorch_model(features)
                     pytorch_score = int(output_tensor.item() * 100)
             except Exception as err:
-                print(f"PyTorch match scoring error: {err}")
+                print(f"[MatchingService] PyTorch score skipped: {err}")
 
-        exp_verdict = "Strong Experience Match — Candidate has relevant internships and project work."
         if missing_skills:
-            reasoning = f"Matched {len(matched_skills)} of {len(required_skills)} key requirements ({', '.join(matched_skills)}). Missing skills to highlight or study: {', '.join(missing_skills)}."
+            reasoning = (
+                f"Matched {len(matched_skills)} of {len(required_skills)} key requirements "
+                f"({', '.join(matched_skills)}). Missing skills to highlight or study: {', '.join(missing_skills)}."
+            )
         else:
             reasoning = f"Exceptional 100% skill match across all required technologies ({', '.join(matched_skills)})."
 
         if pytorch_score is not None:
             reasoning += f" [Experimental PyTorch Neural Matcher score: {pytorch_score}%]"
-
 
         return JobMatchResult(
             job_id=job_id,
@@ -204,7 +205,7 @@ class MatchingService:
             skill_coverage_percent=skill_coverage_pct,
             matched_skills=matched_skills,
             missing_skills=missing_skills,
-            experience_verdict=exp_verdict,
+            experience_verdict="Strong Experience Match — Candidate has relevant internships and project work.",
             summary_reasoning=reasoning
         )
 
@@ -213,14 +214,12 @@ class MatchingService:
         Generates tailored application materials without hallucinating experiences.
         Retrieves top relevant projects from Resume RAG and writes a professional cover letter.
         """
-        # Retrieve context from Resume RAG for key skills
         query = " ".join(required_skills)
         relevant_chunks = self.rag.search_resume_context(query, top_k=2)
 
         master_resume = self.rag.get_full_resume()
         candidate_name = master_resume["personal_info"]["name"]
-        
-        # Extract top 2 projects matching JD query
+
         highlighted_projects = []
         for chunk in relevant_chunks:
             if chunk.get("section") == "project" and "project_data" in chunk:
@@ -248,7 +247,7 @@ I am particularly excited about {company}'s focus on innovation and would welcom
 
 Sincerely,
 {candidate_name}
-Email: {master_resume['personal_info']['email']} | Phone: {master_resume['personal_info']['phone']}
+Email: {master_resume['personal_info']['email']} | Phone: {master_resume['personal_info'].get('phone', '')}
 """
 
         return TailoredMaterials(

@@ -29,4 +29,4 @@ USER appuser
 EXPOSE 8000
 
 # PORT env var is set by Railway/Render automatically; fallback to 8000
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]

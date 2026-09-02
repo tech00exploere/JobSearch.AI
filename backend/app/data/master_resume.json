@@ -1,82 +1,22 @@
 {
   "personal_info": {
-    "name": "Priyanshu Chandra",
-    "title": "business development associate",
-    "email": "priyanshu2507.rjs@gmail.com",
-    "phone": "+918936024837",
-    "location": "Ghaziabad, Uttar Pradesh, India",
-    "github": "https://github.com/tech00exploere",
-    "linkedin": "https://www.linkedin.com/in/priyanshu-chandra-6420b2230"
+    "name": "User B",
+    "email": "userB@example.com",
+    "title": "Lead Data Scientist"
   },
-  "summary": "Computer Science student with hands-on experience building customer-focused digital products and collaborating on open-source software. Strong communication, problem-solving, adaptability, and product understanding skills. Inter ested in Sales, Business Development, Technology Sales, Product Marketing, and Customer Success roles.",
+  "summary": "User B unique summary",
   "skills": {
     "languages": [
-      "Market Research",
-      "Digital Marketing",
-      "Microsoft Office",
-      "Customer Success Management",
-      "Customer Analysis",
-      "Customer Engagement",
-      "Product Marketing",
-      "Professional Networking",
-      "Presentations",
-      "Customer Relationship Management",
-      "Agriculture",
-      "Product Management",
-      "Research",
-      "Data Structures",
-      "Problem Solving",
-      "Negotiation",
-      "Relationship Building",
-      "Marketing",
-      "Computer Science",
-      "Teamwork",
-      "Algorithms",
-      "Open-Source Software",
-      "Google Workspace",
-      "Git (Version Control System)",
-      "Product Demonstration",
-      "Source (Game Engine)",
-      "Lead Generation"
+      "R",
+      "PyTorch"
     ],
     "frontend": [],
     "backend": [],
     "ai_ml": [],
     "databases": [],
-    "devops_tools": [
-      "Authentications",
-      "Active Listening",
-      "Business Development",
-      "Management",
-      "Technology Sales",
-      "Github",
-      "ChatGPT",
-      "Sales",
-      "Adaptability",
-      "Communication"
-    ]
+    "devops_tools": []
   },
   "projects": [],
-  "experience": [
-    {
-      "id": "exp-1",
-      "company": "",
-      "role": "Open Source Contributor",
-      "location": "",
-      "period": "2026-01-01 - 2026-08-30",
-      "highlights": [
-        "• Contributed 25+ pull requests with 15+ merged contributions across open-source software projects.",
-        "• Collaborated with maintainers through issue discussions, code reviews, testing, and written technical communication.",
-        "• Independently investigated software problems and communicated solutions clearly to project maintainers."
-      ]
-    }
-  ],
-  "education": [
-    {
-      "degree": "Bachelor of Technology in Computer Science and Engineering",
-      "institution": "Ajay Kumar Garg engineering college",
-      "year": "2023-01-01 - 2027-01-01",
-      "details": "CGPA: 7.31/10"
-    }
-  ]
+  "experience": [],
+  "education": []
 }

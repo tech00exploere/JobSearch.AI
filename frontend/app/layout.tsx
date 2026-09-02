@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,7 +26,6 @@ export const metadata: Metadata = {
   keywords: ["JobSearch.ai", "Job Application Agent", "AI Resume Matcher", "RAG", "Job Search Automation"],
 };
 
-
 export default function RootLayout({
   children,
 }: {
@@ -33,8 +34,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body>
-        <Sidebar />
-        <main className="main-content">{children}</main>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
+        <AuthProvider>
+          <Sidebar />
+          <main className="main-content">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

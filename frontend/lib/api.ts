@@ -91,6 +91,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -326,4 +327,33 @@ export async function getPlatformLinks(criteria: Record<string, any>): Promise<{
     body: JSON.stringify(criteria),
   });
 }
+
+/**
+ * Authentication & Candidate User Schemas
+ */
+export interface AuthUser {
+  id: string;
+  google_id: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
+
+export async function loginWithGoogle(credential: string): Promise<AuthUser> {
+  return apiFetch<AuthUser>("/auth/google", {
+    method: "POST",
+    body: JSON.stringify({ credential }),
+  });
+}
+
+export async function getAuthMe(): Promise<AuthUser> {
+  return apiFetch<AuthUser>("/auth/me");
+}
+
+export async function logoutUser(): Promise<{ status: string; message: string }> {
+  return apiFetch<{ status: string; message: string }>("/auth/logout", {
+    method: "POST",
+  });
+}
+
 

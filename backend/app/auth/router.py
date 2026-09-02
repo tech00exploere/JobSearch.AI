@@ -1,11 +1,12 @@
 """
 Authentication API Router
 =========================
-POST /api/auth/google — Verify Google ID Token & set HttpOnly cookie
+POST /api/auth/google — Verify Google ID Token & set session cookie
 GET  /api/auth/me     — Hydrate current authenticated session user
 POST /api/auth/logout — Invalidate session and clear cookie
 """
 
+import os
 from fastapi import APIRouter, HTTPException, Response, Depends, status
 from typing import Dict, Any
 from app.auth import google, service
@@ -36,17 +37,18 @@ async def login_with_google(
     # Create session
     session_id = service.create_session(user)
 
-    # Attach HttpOnly cookie
+    # Attach HttpOnly cookie with cross-site compatibility
     response.set_cookie(
         key=COOKIE_SESSION_KEY,
         value=session_id,
         httponly=True,
         max_age=30 * 24 * 60 * 60,  # 30 days
-        samesite="lax",
-        secure=False,  # Set True in production HTTPS
+        samesite="none",
+        secure=True,
         path="/"
     )
 
+    user.session_token = session_id
     return user
 
 
@@ -64,5 +66,10 @@ async def logout(
     current_user: SessionUser = Depends(get_current_user_optional)
 ) -> Dict[str, str]:
     """Destroys current session and clears HttpOnly session cookie."""
-    response.delete_cookie(key=COOKIE_SESSION_KEY, path="/")
+    response.delete_cookie(
+        key=COOKIE_SESSION_KEY,
+        path="/",
+        samesite="none",
+        secure=True
+    )
     return {"status": "success", "message": "Successfully logged out."}

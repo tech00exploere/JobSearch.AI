@@ -37,6 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const authUser = await loginWithGoogle(googleCredential);
+      if (authUser.session_token && typeof window !== "undefined") {
+        sessionStorage.setItem("jobsearch_session_token", authUser.session_token);
+      }
       setUser(authUser);
       return authUser;
     } finally {
@@ -51,6 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore errors on logout
     } finally {
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("jobsearch_session_token");
+      }
       setUser(null);
       setIsLoading(false);
     }

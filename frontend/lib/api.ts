@@ -90,10 +90,19 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 
 async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  let authHeader: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = sessionStorage.getItem("jobsearch_session_token");
+    if (token) {
+      authHeader["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...authHeader,
       ...options?.headers,
     },
     ...options,
@@ -337,6 +346,7 @@ export interface AuthUser {
   email: string;
   name: string;
   picture?: string;
+  session_token?: string;
 }
 
 export async function loginWithGoogle(credential: string): Promise<AuthUser> {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -10,6 +10,7 @@ export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+  const gsiInitializedRef = useRef(false);
 
   const googleClientId =
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
@@ -22,11 +23,9 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Initialize Google Identity Services (GSI) button exactly once
+  // Initialize Google Identity Services (GSI) button exactly once per mount
   useEffect(() => {
     if (typeof window === "undefined" || isAuthenticated) return;
-
-    let isInitialized = false;
 
     const handleCredentialResponse = async (response: any) => {
       if (!response || !response.credential) {
@@ -39,40 +38,44 @@ export default function LoginPage() {
         await login(response.credential);
         router.push("/career-intelligence");
       } catch (err: any) {
-        setError(err.message || "Google Sign-In failed. Please try again.");
+        setError(err.message || "Google Sign-In failed. Please check server connection.");
       } finally {
         setIsLoggingIn(false);
       }
     };
 
     const initGsi = () => {
-      if (isInitialized) return true;
+      if (gsiInitializedRef.current) return true;
       if ((window as any).google?.accounts?.id) {
-        isInitialized = true;
-        (window as any).google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: handleCredentialResponse,
-        });
-
-        const parent = document.getElementById("google-signin-button-container");
-        if (parent) {
-          parent.innerHTML = "";
-          (window as any).google.accounts.id.renderButton(parent, {
-            theme: "filled_blue",
-            size: "large",
-            text: "continue_with",
-            shape: "rectangular",
-            width: 320,
+        try {
+          (window as any).google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: handleCredentialResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true,
           });
+
+          const parent = document.getElementById("google-signin-button-container");
+          if (parent) {
+            parent.innerHTML = "";
+            (window as any).google.accounts.id.renderButton(parent, {
+              theme: "filled_blue",
+              size: "large",
+              text: "continue_with",
+              shape: "rectangular",
+              width: 320,
+            });
+          }
+          gsiInitializedRef.current = true;
+          return true;
+        } catch {
+          return false;
         }
-        return true;
       }
       return false;
     };
 
-    // Try immediate initialization
     if (!initGsi()) {
-      // Poll until script loads
       const timer = setInterval(() => {
         if (initGsi()) {
           clearInterval(timer);

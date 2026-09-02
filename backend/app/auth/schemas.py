@@ -1,9 +1,9 @@
 """
 Pydantic Schemas for Authentication & User Sessions
-================================────────────────====
+====================================================
 """
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     email: str
     name: str
     picture: Optional[str] = None
+    session_token: Optional[str] = None
     created_at: Optional[datetime] = None
     last_login_at: Optional[datetime] = None
 
@@ -28,3 +29,4 @@ class SessionUser(BaseModel):
     email: str
     name: str
     picture: Optional[str] = None
+    session_token: Optional[str] = None

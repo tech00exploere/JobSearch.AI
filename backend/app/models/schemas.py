@@ -2,7 +2,7 @@
 Pydantic Schemas for JobSearch.ai — AI Job Search & Application Agent
 =====================================================================
 Request and response models for Job discovery, JD analysis, Resume RAG,
-Deterministic Matching, HITL Approval, and Application Tracking.
+Deterministic Matching, Material Tailoring, and Application Tracking.
 """
 
 from pydantic import BaseModel, Field

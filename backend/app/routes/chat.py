@@ -18,7 +18,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
     
     - Accepts user query / job search prompt
     - Triggers JobSearch.ai Agent loop (Job Search, JD Analysis, Deterministic Matcher, Resume RAG, Material Tailoring)
-    - Returns structured answer + visual tool badges + HITL status
+    - Returns structured answer + visual tool badges + tailored materials
     """
     try:
         return get_agent_response(request.message)

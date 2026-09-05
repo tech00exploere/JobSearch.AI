@@ -2,7 +2,7 @@
 Jobs & Applications Router — REST API Endpoints
 =================================================
 Provides endpoints for Job Discovery, JD Matching, Resume RAG,
-HITL Application Preparation/Approval, and Tracker DB logging.
+Application Material Tailoring, and Tracker DB logging.
 """
 
 import os
@@ -65,9 +65,9 @@ async def calculate_match(job_id: str = Query(...)) -> JobMatchResult:
     )
 
 
-@router.post("/jobs/prepare", response_model=PreparedApplication, summary="Prepare application bundle for HITL review")
+@router.post("/jobs/prepare", response_model=PreparedApplication, summary="Prepare application bundle for review")
 async def prepare_application(job_id: str = Query(...)) -> PreparedApplication:
-    """Generates tailored resume summary + cover letter and logs into Prepared (HITL) queue"""
+    """Generates tailored resume summary + cover letter and logs into tracker queue"""
     job = job_service.get_job_details(job_id)
     if not job:
         raise HTTPException(status_code=404, detail=f"Job {job_id} not found.")
@@ -105,7 +105,7 @@ from app.models.schemas import FormQuestion, FormMappingResponse
 
 @router.get("/applications/{application_id}/form", response_model=FormMappingResponse, summary="Get mapped form questions for an application")
 async def get_application_form(application_id: str) -> FormMappingResponse:
-    """Fetch auto-filled and missing application questions for human HITL review"""
+    """Fetch auto-filled and missing application questions for candidate review"""
     app_record = tracker_service.get_application(application_id)
     if not app_record:
         raise HTTPException(status_code=404, detail=f"Application {application_id} not found.")

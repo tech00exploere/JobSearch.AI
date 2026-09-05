@@ -150,27 +150,6 @@ export async function prepareApplication(jobId: string): Promise<PreparedApplica
   });
 }
 
-export async function approveApplication(
-  applicationId: string,
-  action: "approved" | "skipped",
-  notes?: string,
-  mappedFields?: Record<string, string>
-): Promise<any> {
-  return apiFetch("/jobs/approve", {
-    method: "POST",
-    body: JSON.stringify({
-      application_id: applicationId,
-      action,
-      notes,
-      mapped_fields: mappedFields
-    }),
-  });
-}
-
-export async function getApplicationForm(appId: string): Promise<any> {
-  return apiFetch<any>(`/applications/${appId}/form`);
-}
-
 export async function getApplications(): Promise<ApplicationRecord[]> {
   return apiFetch<ApplicationRecord[]>("/applications");
 }

@@ -60,7 +60,7 @@ def get_agent_response(message: str) -> ChatResponse:
 
         for a in apps:
             response_text += f" **{a['company']}**  *{a['role_title']}* | **Match Score**: {a['match_score']}% | **Status**: `{a['status']}`\n"
-        response_text += "\n*Review or approve pending applications in the **Approval Queue**.*"
+        response_text += "\n*Review your discovered jobs and application pipeline in **Web Job Discovery**.*"
 
         return ChatResponse(
             response=response_text,
@@ -104,13 +104,13 @@ def get_agent_response(message: str) -> ChatResponse:
     match_res = tool_calculate_job_match(job_id=job_id).get("match", {})
     match_score = match_res.get("overall_match_score", 85)
 
-    # Prepare Application (HITL)
+    # Prepare Application Materials
     tool_badges.append(
         ToolCallBadge(
             tool_name="prepare_application",
             action_summary=f"Retrieving Resume RAG context & tailoring materials for {top_job['company']}...",
             status="completed",
-            result_snippet="Application bundle logged in Prepared HITL queue."
+            result_snippet="Application bundle prepared for review."
         )
     )
 
@@ -139,7 +139,7 @@ Prepared Application ID: {prep_res.get('application_id')}
 Tailored Resume Summary: {prep_res.get('tailored_resume_summary')}
 
 Instructions:
-Synthesize this information in clean markdown. Highlight the job details, match score, skill breakdown, and remind the user that the application requires HUMAN APPROVAL in the Approval Queue before submission.
+Synthesize this information in clean markdown. Highlight the job details, match score, skill breakdown, and remind the user that tailored materials are ready for their manual application in Web Job Discovery.
 """
             gemini_response = genai_model.generate_content(prompt)
             if gemini_response and gemini_response.text:
@@ -176,11 +176,11 @@ Synthesize this information in clean markdown. Highlight the job details, match 
 
 ---
 
-> **HUMAN APPROVAL REQUIRED**
+> **CANDIDATE ACTION READY**
 >
-> The application has been prepared and placed in your **Approval Queue** (`application_id: {prep_res.get('application_id')}`).
+> Application bundle prepared (`application_id: {prep_res.get('application_id')}`).
 >
-> **Action Required**: Please review the tailored materials and click **[Apply]** in the approval interface to submit.
+> **Action**: Review your materials in **Web Job Discovery**, click **Apply Now** to submit on the employer portal, and mark **[I Applied]**.
 """
 
     return ChatResponse(

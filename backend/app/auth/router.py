@@ -7,7 +7,7 @@ POST /api/auth/logout — Invalidate session and clear cookie
 """
 
 import os
-from fastapi import APIRouter, HTTPException, Response, Depends, status
+from fastapi import APIRouter, HTTPException, Response, Request, Depends, status
 from typing import Dict, Any
 from app.auth import google, service
 from app.auth.schemas import GoogleLoginRequest, UserResponse, SessionUser
@@ -62,10 +62,19 @@ async def get_me(
 
 @router.post("/auth/logout", summary="Log out of current session")
 async def logout(
+    request: Request,
     response: Response,
     current_user: SessionUser = Depends(get_current_user_optional)
 ) -> Dict[str, str]:
     """Destroys current session and clears HttpOnly session cookie."""
+    session_id = request.cookies.get(COOKIE_SESSION_KEY)
+    if not session_id:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            session_id = auth_header[7:].strip()
+    if session_id:
+        service.delete_session(session_id)
+
     response.delete_cookie(
         key=COOKIE_SESSION_KEY,
         path="/",

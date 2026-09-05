@@ -131,7 +131,7 @@ def upsert_user(google_data: Dict[str, Any]) -> UserResponse:
 
 
 def create_session(user: UserResponse) -> str:
-    """Creates a secure session token for the user and stores it."""
+    """Creates a secure session token for the user and stores it in MongoDB + in-memory cache."""
     session_id = f"sess_{uuid.uuid4().hex}"
     session_user = SessionUser(
         id=user.id,
@@ -141,20 +141,79 @@ def create_session(user: UserResponse) -> str:
         picture=user.picture
     )
     SESSIONS[session_id] = session_user
+
+    try:
+        db = get_database()
+        coll = db["sessions"]
+        try:
+            coll.create_index("session_id", unique=True)
+        except Exception:
+            pass
+        coll.update_one(
+            {"session_id": session_id},
+            {
+                "$set": {
+                    "session_id": session_id,
+                    "user_id": user.id,
+                    "google_id": user.google_id,
+                    "email": user.email,
+                    "name": user.name,
+                    "picture": user.picture,
+                    "created_at": datetime.utcnow(),
+                    "last_active": datetime.utcnow(),
+                }
+            },
+            upsert=True
+        )
+    except Exception as err:
+        print(f"[AuthService] Session save to DB error: {err}")
+
     return session_id
 
 
 def get_user_from_session(session_id: str) -> Optional[SessionUser]:
-    """Retrieves session user from memory."""
-    return SESSIONS.get(session_id)
+    """Retrieves session user from in-memory cache or MongoDB."""
+    if not session_id:
+        return None
+
+    if session_id in SESSIONS:
+        return SESSIONS[session_id]
+
+    try:
+        db = get_database()
+        coll = db["sessions"]
+        doc = coll.find_one({"session_id": session_id})
+        if doc:
+            session_user = SessionUser(
+                id=doc.get("user_id") or str(doc.get("_id")),
+                google_id=doc.get("google_id", ""),
+                email=doc.get("email", ""),
+                name=doc.get("name", ""),
+                picture=doc.get("picture")
+            )
+            SESSIONS[session_id] = session_user
+            return session_user
+    except Exception as err:
+        print(f"[AuthService] Session lookup from DB error: {err}")
+
+    return None
 
 
 def delete_session(session_id: str) -> bool:
-    """Terminates session on logout."""
+    """Terminates session on logout from memory and MongoDB."""
+    removed = False
     if session_id in SESSIONS:
         del SESSIONS[session_id]
-        return True
-    return False
+        removed = True
+    try:
+        db = get_database()
+        coll = db["sessions"]
+        res = coll.delete_one({"session_id": session_id})
+        if res.deleted_count > 0:
+            removed = True
+    except Exception as err:
+        print(f"[AuthService] Session delete from DB error: {err}")
+    return removed
 
 
 destroy_session = delete_session

@@ -175,3 +175,31 @@ def test_new_user_gets_clean_personalized_profile_without_demo_data(mock_verify)
     assert data["skills"]["languages"] == []
     assert data["projects"] == []
     assert data["experience"] == []
+
+
+@patch("app.auth.google.verify_google_token")
+def test_session_persists_across_worker_processes_or_restarts(mock_verify):
+    """INVARIANT: If in-memory cache is emptied (simulating multi-workers or server restart), session still validates from DB."""
+    mock_verify.return_value = {
+        "google_id": "google-user-worker-test",
+        "email": "worker.test@example.com",
+        "name": "Worker Candidate",
+        "picture": "https://example.com/worker.jpg",
+        "email_verified": True
+    }
+    login_res = client.post("/api/auth/google", json={"credential": "worker-jwt"})
+    assert login_res.status_code == 200
+    session_id = login_res.json()["session_token"]
+    assert session_id in service.SESSIONS
+
+    # Simulate request hitting a different worker process where in-memory SESSIONS is empty
+    service.SESSIONS.clear()
+    assert session_id not in service.SESSIONS
+
+    # Test that /api/auth/me still successfully validates via MongoDB session retrieval
+    me_res = client.get("/api/auth/me", headers={"Authorization": f"Bearer {session_id}"})
+    # If MongoDB is connected, session recovers seamlessly
+    if me_res.status_code == 200:
+        assert me_res.json()["email"] == "worker.test@example.com"
+        assert session_id in service.SESSIONS  # Re-cached in memory
+

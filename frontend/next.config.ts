@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
         destination: "/career-intelligence",
         permanent: true,
       },
+      {
+        source: "/candidate",
+        destination: "/profile",
+        permanent: false,
+      },
     ];
   },
 };

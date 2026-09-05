@@ -22,14 +22,18 @@ from app.services.tracker_service import tracker_service
 from app.rag.resume_rag import resume_rag_engine
 from app.services.resume_parser_service import resume_parser_service
 from app.auth.schemas import SessionUser
-from app.auth.dependencies import get_current_user_optional
+from app.auth.dependencies import get_current_user, get_current_user_optional
 from app.auth import service as auth_service
 
 router = APIRouter()
 
-# Path where the uploaded resume PDF is stored on disk
-RESUME_PDF_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "resume.pdf")
-RESUME_PDF_PATH = os.path.abspath(RESUME_PDF_PATH)
+
+def get_user_resume_pdf_path(user_id: str) -> str:
+    """Returns isolated resume PDF file path on disk for the specific authenticated user."""
+    safe_id = "".join(c for c in user_id if c.isalnum() or c in ("-", "_"))
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "resumes"))
+    os.makedirs(base_dir, exist_ok=True)
+    return os.path.join(base_dir, f"resume_{safe_id}.pdf")
 
 
 @router.get("/jobs/search", response_model=List[JobListing], summary="Search job listings")
@@ -201,18 +205,18 @@ async def clear_applications() -> Dict[str, Any]:
 
 @router.get("/resume", summary="Get candidate master resume profile")
 async def get_master_resume(
-    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+    current_user: SessionUser = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """Retrieve candidate master resume profile (isolated per user in MongoDB)"""
+    """Retrieve candidate master resume profile (strictly isolated per user in MongoDB)"""
     return auth_service.get_user_resume_profile(current_user)
 
 
 @router.put("/resume", summary="Update candidate master resume profile")
 async def update_master_resume(
     new_resume: Dict[str, Any],
-    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+    current_user: SessionUser = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """Update candidate master resume profile for this user and re-index RAG engine"""
+    """Update candidate master resume profile for this user only and re-index RAG engine"""
     try:
         auth_service.save_user_resume_profile(current_user, new_resume)
         resume_rag_engine.update_resume(new_resume)
@@ -223,13 +227,14 @@ async def update_master_resume(
 
 @router.get("/resume/pdf", summary="Download the stored candidate resume PDF")
 async def get_resume_pdf(
-    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+    current_user: SessionUser = Depends(get_current_user)
 ):
-    """Serve the stored resume PDF file for download/preview"""
-    if not os.path.exists(RESUME_PDF_PATH):
-        raise HTTPException(status_code=404, detail="No resume PDF has been uploaded yet.")
+    """Serve the stored resume PDF file for download/preview for the authenticated user only"""
+    user_pdf_path = get_user_resume_pdf_path(current_user.id)
+    if not os.path.exists(user_pdf_path):
+        raise HTTPException(status_code=404, detail="No resume PDF has been uploaded yet for your account.")
     return FileResponse(
-        path=RESUME_PDF_PATH,
+        path=user_pdf_path,
         media_type="application/pdf",
         filename="resume.pdf",
         headers={"Content-Disposition": "inline; filename=resume.pdf"}
@@ -239,9 +244,9 @@ async def get_resume_pdf(
 @router.post("/resume/upload", summary="Upload a resume file and parse it using Affinda AI")
 async def upload_and_parse_resume(
     file: UploadFile = File(...),
-    current_user: Optional[SessionUser] = Depends(get_current_user_optional)
+    current_user: SessionUser = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """Upload PDF or text resume, parse into master resume JSON schema via Affinda, save to user's MongoDB profile, and update RAG index"""
+    """Upload PDF or text resume, parse into master resume JSON schema via Affinda, save to user's isolated MongoDB profile, and update RAG index"""
     try:
         content = await file.read()
         filename = (file.filename or "resume.pdf").lower()
@@ -255,10 +260,10 @@ async def upload_and_parse_resume(
         if not content:
             raise HTTPException(status_code=400, detail="The uploaded file is empty.")
 
-        # 1. Save PDF to disk (only for PDF uploads)
+        # 1. Save PDF to disk isolated per user (only for PDF uploads)
         if filename.endswith(".pdf"):
-            os.makedirs(os.path.dirname(RESUME_PDF_PATH), exist_ok=True)
-            with open(RESUME_PDF_PATH, "wb") as f:
+            user_pdf_path = get_user_resume_pdf_path(current_user.id)
+            with open(user_pdf_path, "wb") as f:
                 f.write(content)
 
         # 2. Parse using Affinda (send raw bytes directly — Affinda handles PDF + TXT natively)

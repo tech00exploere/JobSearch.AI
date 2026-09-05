@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { getMasterResume, updateMasterResume, uploadResumeFile, getResumePdfUrl } from "@/lib/api";
 
 interface PersonalInfo {
@@ -62,10 +64,30 @@ export default function ProfilePage() {
   const [experience, setExperience] = useState<Experience[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
 
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const [pdfStored, setPdfStored] = useState<boolean>(false);
+
+  // Protect route: redirect unauthenticated visitors to /login
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, isAuthLoading, router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadProfile();
+      // Check if a user-specific PDF is already stored on the server
+      fetch(getResumePdfUrl(), { method: "GET", credentials: "include" })
+        .then((r) => { if (r.ok) setPdfStored(true); })
+        .catch(() => {});
+    }
+  }, [isAuthenticated]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,33 +125,37 @@ export default function ProfilePage() {
     }
   };
 
-
-  useEffect(() => {
-    loadProfile();
-    // Check if a PDF is already stored on the server using the correct API URL
-    fetch(getResumePdfUrl(), { method: "GET", credentials: "include" })
-      .then((r) => { if (r.ok) setPdfStored(true); })
-      .catch(() => {});
-  }, []);
-
-
-
   const loadProfile = () => {
     setIsLoading(true);
     getMasterResume()
       .then((data: any) => {
         if (data) {
-          setPersonalInfo(data.personal_info || {});
+          const info = data.personal_info || {};
+          if (user) {
+            if (!info.name && user.name) info.name = user.name;
+            if (!info.email && user.email) info.email = user.email;
+          }
+          setPersonalInfo(info);
           setSummary(data.summary || "");
-          setSkills(data.skills || {});
+          setSkills(data.skills || {
+            languages: [],
+            frontend: [],
+            backend: [],
+            ai_ml: [],
+            databases: [],
+            devops_tools: [],
+          });
           setProjects(data.projects || []);
           setExperience(data.experience || []);
           setEducation(data.education || []);
         }
       })
       .catch((err) => {
-        setMessage({ text: "Failed to load master resume profile.", type: "error" });
-        console.error(err);
+        if (err.message && err.message.includes("401")) {
+          router.replace("/login");
+        } else {
+          setMessage({ text: "Failed to load candidate profile: " + err.message, type: "error" });
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -235,25 +261,46 @@ export default function ProfilePage() {
     });
   };
 
+  if (isAuthLoading || !isAuthenticated) {
+    return (
+      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 36, height: 36, border: "3px solid rgba(59,130,246,0.2)", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <p style={{ fontSize: 14 }}>Authenticating candidate session...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
-      <div style={{ padding: 32, color: "#94a3b8", maxWidth: 900, margin: "0 auto" }}>
-        <p>Loading candidate profile details...</p>
+      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 36, height: 36, border: "3px solid rgba(59,130,246,0.2)", borderTopColor: "#3b82f6", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <p style={{ fontSize: 14 }}>Loading candidate profile details...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div style={{ padding: 32, color: "#f8fafc", maxWidth: 950, margin: "0 auto" }}>
-      <header style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <header style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: "#93c5fd" }}>
-            👤 Candidate Profile & Master Resume
+            👤 Candidate Master Profile
           </h1>
           <p style={{ color: "#94a3b8", fontSize: 14, margin: "6px 0 0" }}>
-            View and manage your master resume details. This profile is used by the RAG engine to tailormake application materials.
+            Viewing personal candidate profile for <strong style={{ color: "#f8fafc" }}>{user?.name || "Candidate"}</strong> ({user?.email}) — strictly isolated to your account.
           </p>
         </div>
+        {user?.picture && (
+          <img
+            src={user.picture}
+            alt={user.name || "Candidate"}
+            style={{ width: 44, height: 44, borderRadius: "50%", border: "2px solid #3b82f6" }}
+          />
+        )}
       </header>
 
       {/* Resume File Section */}

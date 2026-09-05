@@ -56,16 +56,33 @@ class TestJobSearchAndMatching:
         assert "missing_skills" in data
         assert "summary_reasoning" in data
 
+    def test_resume_unauthenticated_returns_401(self):
+        client.cookies.clear()
+        res = client.get("/api/resume")
+        assert res.status_code == 401
+
     def test_master_resume_rag(self):
-        response = client.get("/api/resume")
+        from app.auth.schemas import SessionUser
+        from app.auth.service import SESSIONS
+        test_user = SessionUser(
+            id="test-user-api",
+            google_id="google-test-api",
+            email="test.api@example.com",
+            name="Test API User"
+        )
+        SESSIONS["test-session-token"] = test_user
+        cookies = {"jobsearch_session": "test-session-token"}
+
+        response = client.get("/api/resume", cookies=cookies)
         assert response.status_code == 200
         data = response.json()
         assert "personal_info" in data
         assert "projects" in data
 
     def test_update_master_resume(self):
+        cookies = {"jobsearch_session": "test-session-token"}
         # Fetch current
-        get_res = client.get("/api/resume")
+        get_res = client.get("/api/resume", cookies=cookies)
         current_resume = get_res.json()
         
         # Modify temp
@@ -73,35 +90,35 @@ class TestJobSearchAndMatching:
         current_resume["personal_info"]["name"] = "Ritesh Kumar Tester"
         
         # Put back
-        put_res = client.put("/api/resume", json=current_resume)
+        put_res = client.put("/api/resume", json=current_resume, cookies=cookies)
         assert put_res.status_code == 200
         assert put_res.json()["status"] == "success"
         
         # Verify it changed
-        verify_res = client.get("/api/resume")
+        verify_res = client.get("/api/resume", cookies=cookies)
         assert verify_res.json()["personal_info"]["name"] == "Ritesh Kumar Tester"
         
         # Revert
         current_resume["personal_info"]["name"] = original_name
-        client.put("/api/resume", json=current_resume)
+        client.put("/api/resume", json=current_resume, cookies=cookies)
 
     def test_upload_resume_text(self):
+        cookies = {"jobsearch_session": "test-session-token"}
         mock_file_content = "Name: Ritesh Kumar\nEmail: ritesh.tester@example.com\nRole: Full-Stack Developer\nSkills: Python, React, MongoDB"
         files = {"file": ("resume.txt", mock_file_content, "text/plain")}
         
         # Save current resume
-        get_res = client.get("/api/resume")
+        get_res = client.get("/api/resume", cookies=cookies)
         current_resume = get_res.json()
         
         try:
-            response = client.post("/api/resume/upload", files=files)
-            # If rate-limiting happens or no GEMINI_API_KEY, ignore 400/500 to keep tests robust
+            response = client.post("/api/resume/upload", files=files, cookies=cookies)
             if response.status_code == 200:
                 data = response.json()
                 assert data["status"] == "success"
                 assert "parsed_data" in data
         finally:
-            client.put("/api/resume", json=current_resume)
+            client.put("/api/resume", json=current_resume, cookies=cookies)
 
 
 class TestCandidateApplicationTracker:

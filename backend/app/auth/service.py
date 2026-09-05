@@ -22,31 +22,40 @@ USER_PROFILES_MEMORY: Dict[str, Dict[str, Any]] = {}
 DEFAULT_RESUME_PATH = os.path.join(os.path.dirname(__file__), "../data/master_resume.json")
 
 
+def create_empty_candidate_profile(name: str = "", email: str = "") -> Dict[str, Any]:
+    """
+    Creates a clean, personalized candidate master resume schema for a user.
+    Does NOT contain any hardcoded demo or shared candidate data.
+    """
+    return {
+        "personal_info": {
+            "name": name,
+            "email": email,
+            "title": "",
+            "phone": "",
+            "location": "",
+            "github": "",
+            "linkedin": "",
+            "internshala_profile": "",
+        },
+        "summary": "",
+        "skills": {
+            "languages": [],
+            "frontend": [],
+            "backend": [],
+            "ai_ml": [],
+            "databases": [],
+            "devops_tools": [],
+        },
+        "projects": [],
+        "experience": [],
+        "education": [],
+    }
+
+
 def _get_default_resume_template(name: str = "", email: str = "") -> Dict[str, Any]:
-    """Loads baseline template and populates user info."""
-    data = {}
-    if os.path.exists(DEFAULT_RESUME_PATH):
-        try:
-            with open(DEFAULT_RESUME_PATH, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception:
-            pass
-    if not data:
-        data = {
-            "personal_info": {"name": name, "email": email, "title": "", "phone": "", "location": "", "github": "", "linkedin": ""},
-            "summary": "",
-            "skills": {"languages": [], "frontend": [], "backend": [], "ai_ml": [], "databases": [], "devops_tools": []},
-            "projects": [],
-            "experience": [],
-            "education": []
-        }
-    else:
-        # Override name and email with user's own if newly initialized
-        if name and not data.get("personal_info", {}).get("name"):
-            data["personal_info"]["name"] = name
-        if email and not data.get("personal_info", {}).get("email"):
-            data["personal_info"]["email"] = email
-    return data
+    """Compatibility alias for clean profile creation."""
+    return create_empty_candidate_profile(name=name, email=email)
 
 
 def upsert_user(google_data: Dict[str, Any]) -> UserResponse:
@@ -72,6 +81,7 @@ def upsert_user(google_data: Dict[str, Any]) -> UserResponse:
         except Exception:
             pass
 
+        new_profile = create_empty_candidate_profile(name=name, email=email)
         result = coll.find_one_and_update(
             {"google_id": google_id},
             {
@@ -83,6 +93,7 @@ def upsert_user(google_data: Dict[str, Any]) -> UserResponse:
                 },
                 "$setOnInsert": {
                     "created_at": now,
+                    "resume_profile": new_profile,
                 }
             },
             upsert=True,
@@ -113,6 +124,8 @@ def upsert_user(google_data: Dict[str, Any]) -> UserResponse:
             "last_login_at": now,
         }
         USERS_MEMORY[google_id] = user_doc
+        if user_id not in USER_PROFILES_MEMORY:
+            USER_PROFILES_MEMORY[user_id] = create_empty_candidate_profile(name=name, email=email)
 
     return UserResponse(**user_doc)
 
@@ -132,27 +145,28 @@ def create_session(user: UserResponse) -> str:
 
 
 def get_user_from_session(session_id: str) -> Optional[SessionUser]:
-    """Retrieves session user if session_id is valid."""
-    if not session_id:
-        return None
+    """Retrieves session user from memory."""
     return SESSIONS.get(session_id)
 
 
-def destroy_session(session_id: str) -> bool:
-    """Removes session_id from active sessions."""
+def delete_session(session_id: str) -> bool:
+    """Terminates session on logout."""
     if session_id in SESSIONS:
         del SESSIONS[session_id]
         return True
     return False
 
 
+destroy_session = delete_session
+
+
 def get_user_resume_profile(user: Optional[SessionUser]) -> Dict[str, Any]:
     """
     Retrieves candidate's isolated master resume profile from MongoDB.
-    Falls back to user-populated default template.
+    Enforces user isolation — never returns another candidate's profile or hardcoded demo data.
     """
     if not user:
-        return _get_default_resume_template()
+        return create_empty_candidate_profile()
 
     # Try MongoDB
     try:
@@ -167,6 +181,11 @@ def get_user_resume_profile(user: Optional[SessionUser]) -> Dict[str, Any]:
         doc = coll.find_one(query)
         if doc and doc.get("resume_profile"):
             return doc["resume_profile"]
+        elif doc:
+            # Initialize clean profile for this existing user
+            profile = create_empty_candidate_profile(name=user.name, email=user.email)
+            coll.update_one(query, {"$set": {"resume_profile": profile, "profile_updated_at": datetime.utcnow()}})
+            return profile
     except Exception as err:
         print(f"[AuthService] DB get profile error: {err}")
 
@@ -174,25 +193,19 @@ def get_user_resume_profile(user: Optional[SessionUser]) -> Dict[str, Any]:
     if user.id in USER_PROFILES_MEMORY:
         return USER_PROFILES_MEMORY[user.id]
 
-    # Return template prefilled with this candidate's name & email
-    template = _get_default_resume_template(name=user.name, email=user.email)
-    template["personal_info"]["name"] = user.name
-    template["personal_info"]["email"] = user.email
-    return template
+    # Return clean personalized template
+    profile = create_empty_candidate_profile(name=user.name, email=user.email)
+    USER_PROFILES_MEMORY[user.id] = profile
+    return profile
 
 
 def save_user_resume_profile(user: Optional[SessionUser], profile_data: Dict[str, Any]) -> bool:
     """
     Saves candidate's isolated master resume profile to MongoDB.
+    Strictly associates candidate data with the authenticated user's unique user_id.
     """
     if not user:
-        # Fallback to local default file for legacy guest mode
-        try:
-            with open(DEFAULT_RESUME_PATH, "w", encoding="utf-8") as f:
-                json.dump(profile_data, f, indent=2)
-            return True
-        except Exception:
-            return False
+        return False
 
     USER_PROFILES_MEMORY[user.id] = profile_data
 

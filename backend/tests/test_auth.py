@@ -132,3 +132,46 @@ def test_user_profiles_are_isolated(mock_verify):
     get_b = client.get("/api/resume", cookies={"jobsearch_session": cookie_b})
     assert get_b.json()["personal_info"]["title"] == "Lead Data Scientist"
     assert get_b.json()["personal_info"]["email"] == "userB@example.com"
+
+
+def test_candidate_resume_endpoints_reject_unauthenticated():
+    """INVARIANT: All /api/resume endpoints reject unauthenticated requests with 401."""
+    # GET
+    res_get = client.get("/api/resume")
+    assert res_get.status_code == 401
+
+    # PUT
+    res_put = client.put("/api/resume", json={})
+    assert res_put.status_code == 401
+
+    # Upload
+    res_up = client.post("/api/resume/upload", files={"file": ("test.pdf", b"test", "application/pdf")})
+    assert res_up.status_code == 401
+
+    # PDF
+    res_pdf = client.get("/api/resume/pdf")
+    assert res_pdf.status_code == 401
+
+
+@patch("app.auth.google.verify_google_token")
+def test_new_user_gets_clean_personalized_profile_without_demo_data(mock_verify):
+    """INVARIANT: Newly registered user has their own personalized profile prefilled with Google name & email, without demo data."""
+    mock_verify.return_value = {
+        "google_id": "google-user-fresh",
+        "email": "fresh.candidate@example.com",
+        "name": "Fresh Candidate",
+        "picture": "https://example.com/fresh.jpg",
+        "email_verified": True
+    }
+    login_res = client.post("/api/auth/google", json={"credential": "fresh-jwt"})
+    cookie = login_res.cookies["jobsearch_session"]
+
+    resume_res = client.get("/api/resume", cookies={"jobsearch_session": cookie})
+    assert resume_res.status_code == 200
+    data = resume_res.json()
+    assert data["personal_info"]["name"] == "Fresh Candidate"
+    assert data["personal_info"]["email"] == "fresh.candidate@example.com"
+    # Ensure no hardcoded demo skills or experiences exist
+    assert data["skills"]["languages"] == []
+    assert data["projects"] == []
+    assert data["experience"] == []

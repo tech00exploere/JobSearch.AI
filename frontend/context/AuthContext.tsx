@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUser();
   }, [refreshUser]);
 
-  const login = async (googleCredential: string): Promise<AuthUser> => {
+  const login = useCallback(async (googleCredential: string): Promise<AuthUser> => {
     setIsLoading(true);
     try {
       const authUser = await loginWithGoogle(googleCredential);
@@ -45,9 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const logout = async (): Promise<void> => {
+  const logout = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     try {
       await logoutUser();
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return (
     <AuthContext.Provider

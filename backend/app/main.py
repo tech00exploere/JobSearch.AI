@@ -20,6 +20,7 @@ app = FastAPI(
 ALLOW_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://job-search-ai-ten.vercel.app",
 ]
 
 frontend_url = os.getenv("FRONTEND_URL", "")
@@ -36,6 +37,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include Routers

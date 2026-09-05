@@ -23,41 +23,47 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Initialize Google Identity Services (GSI) button exactly once per mount
+  const handleCredentialResponse = async (response: any) => {
+    if (!response || !response.credential) {
+      setError("No Google credential received.");
+      return;
+    }
+    setIsLoggingIn(true);
+    setError(null);
+    try {
+      await login(response.credential);
+      router.push("/career-intelligence");
+    } catch (err: any) {
+      setError(err.message || "Google Sign-In failed. Please check server connection.");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleCredentialResponseRef = useRef(handleCredentialResponse);
+  useEffect(() => {
+    handleCredentialResponseRef.current = handleCredentialResponse;
+  });
+
+  // Initialize Google Identity Services (GSI) button exactly once
   useEffect(() => {
     if (typeof window === "undefined" || isAuthenticated) return;
 
-    const handleCredentialResponse = async (response: any) => {
-      if (!response || !response.credential) {
-        setError("No Google credential received.");
-        return;
-      }
-      setIsLoggingIn(true);
-      setError(null);
-      try {
-        await login(response.credential);
-        router.push("/career-intelligence");
-      } catch (err: any) {
-        setError(err.message || "Google Sign-In failed. Please check server connection.");
-      } finally {
-        setIsLoggingIn(false);
-      }
-    };
-
     const initGsi = () => {
-      if (gsiInitializedRef.current) return true;
       if ((window as any).google?.accounts?.id) {
         try {
-          (window as any).google.accounts.id.initialize({
-            client_id: googleClientId,
-            callback: handleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true,
-          });
+          if (!(window as any).__googleGsiInitialized) {
+            (window as any).google.accounts.id.initialize({
+              client_id: googleClientId,
+              callback: (resp: any) => handleCredentialResponseRef.current(resp),
+              auto_select: false,
+              cancel_on_tap_outside: true,
+            });
+            (window as any).__googleGsiInitialized = true;
+          }
 
           const parent = document.getElementById("google-signin-button-container");
-          if (parent) {
-            parent.innerHTML = "";
+          if (parent && parent.childElementCount === 0) {
             (window as any).google.accounts.id.renderButton(parent, {
               theme: "filled_blue",
               size: "large",
@@ -66,7 +72,6 @@ export default function LoginPage() {
               width: 320,
             });
           }
-          gsiInitializedRef.current = true;
           return true;
         } catch {
           return false;
@@ -80,10 +85,10 @@ export default function LoginPage() {
         if (initGsi()) {
           clearInterval(timer);
         }
-      }, 300);
+      }, 250);
       return () => clearInterval(timer);
     }
-  }, [googleClientId, isAuthenticated, login, router]);
+  }, [googleClientId, isAuthenticated]);
 
   return (
     <div style={{ minHeight: "85vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>

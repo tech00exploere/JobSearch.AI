@@ -24,6 +24,10 @@ async def get_current_user_optional(request: Request) -> Optional[SessionUser]:
             session_id = auth_header[7:].strip()
 
     if not session_id:
+        # Check query parameter (e.g. for direct PDF previews/downloads)
+        session_id = request.query_params.get("token")
+
+    if not session_id:
         return None
 
     return service.get_user_from_session(session_id)

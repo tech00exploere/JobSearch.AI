@@ -89,13 +89,28 @@ export interface HealthResponse {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 
+export function getStoredSessionToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("jobsearch_session_token") || sessionStorage.getItem("jobsearch_session_token");
+}
+
+export function setStoredSessionToken(token: string): void {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem("jobsearch_session_token", token); } catch {}
+  try { sessionStorage.setItem("jobsearch_session_token", token); } catch {}
+}
+
+export function clearStoredSessionToken(): void {
+  if (typeof window === "undefined") return;
+  try { localStorage.removeItem("jobsearch_session_token"); } catch {}
+  try { sessionStorage.removeItem("jobsearch_session_token"); } catch {}
+}
+
 async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
   let authHeader: Record<string, string> = {};
-  if (typeof window !== "undefined") {
-    const token = sessionStorage.getItem("jobsearch_session_token");
-    if (token) {
-      authHeader["Authorization"] = `Bearer ${token}`;
-    }
+  const token = getStoredSessionToken();
+  if (token) {
+    authHeader["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -179,10 +194,8 @@ export async function uploadResumeFile(file: File): Promise<any> {
   formData.append("file", file);
 
   const headers: Record<string, string> = {};
-  if (typeof window !== "undefined") {
-    const token = sessionStorage.getItem("jobsearch_session_token");
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-  }
+  const token = getStoredSessionToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const response = await fetch(`${API_BASE}/resume/upload`, {
     method: "POST",
@@ -201,6 +214,10 @@ export async function uploadResumeFile(file: File): Promise<any> {
 
 /** Returns the direct URL for viewing/downloading the stored resume PDF */
 export function getResumePdfUrl(): string {
+  const token = getStoredSessionToken();
+  if (token) {
+    return `${API_BASE}/resume/pdf?token=${encodeURIComponent(token)}`;
+  }
   return `${API_BASE}/resume/pdf`;
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { AuthUser, getAuthMe, loginWithGoogle, logoutUser } from "@/lib/api";
+import { AuthUser, getAuthMe, loginWithGoogle, logoutUser, setStoredSessionToken, clearStoredSessionToken } from "@/lib/api";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -37,8 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const authUser = await loginWithGoogle(googleCredential);
-      if (authUser.session_token && typeof window !== "undefined") {
-        sessionStorage.setItem("jobsearch_session_token", authUser.session_token);
+      if (authUser.session_token) {
+        setStoredSessionToken(authUser.session_token);
       }
       setUser(authUser);
       return authUser;
@@ -54,9 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore errors on logout
     } finally {
-      if (typeof window !== "undefined") {
-        sessionStorage.removeItem("jobsearch_session_token");
-      }
+      clearStoredSessionToken();
       setUser(null);
       setIsLoading(false);
     }

@@ -27,7 +27,7 @@ export default function ChatPage() {
       content:
         "**Namaste! I am JobSearch.ai**, your dedicated Job Search & Application Agent.\n\n" +
         "I discover relevant jobs, analyze job descriptions, calculate deterministic fit scores against your master resume, " +
-        "generate non-hallucinated tailored application materials, and prepare applications for your **Human Approval**.",
+        "and generate non-hallucinated tailored materials for your **Candidate-Controlled Applications**.",
     },
   ]);
 
@@ -118,7 +118,7 @@ export default function ChatPage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <Link
-            href="/approval"
+            href="/career-intelligence"
             style={{
               padding: "6px 12px",
               borderRadius: 6,
@@ -130,7 +130,7 @@ export default function ChatPage() {
               textDecoration: "none",
             }}
           >
-            HITL Queue
+            Job Discovery
           </Link>
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

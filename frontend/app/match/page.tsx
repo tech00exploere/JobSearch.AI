@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { searchJobs, calculateMatch, prepareApplication, type JobListing, type JobMatchResult, type PreparedApplication } from "@/lib/api";
 
 const CATEGORIES: Record<string, string[]> = {
@@ -105,7 +106,7 @@ export default function MatchPage() {
           Instant JD Matcher & Resume Tailorer
         </h1>
         <p style={{ color: "#94a3b8", fontSize: 14, margin: "6px 0 0" }}>
-          Evaluates how well your profile matches any job — across any industry. Generates grounded, non-hallucinated tailored materials ready for your approval.
+          Evaluates how well your profile matches any job — across any industry. Generates grounded, non-hallucinated tailored materials ready for your application.
         </p>
       </header>
 
@@ -287,10 +288,10 @@ export default function MatchPage() {
             <div style={{ background: "#1e293b", padding: 24, borderRadius: 12, border: "1px solid rgba(59,130,246,0.3)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: "#60a5fa" }}>
-                  Tailored Materials (HITL)
+                  Tailored Materials
                 </h2>
                 <span style={{ background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, padding: "4px 8px", borderRadius: 6, fontWeight: 600 }}>
-                  Ready for Approval
+                  Ready to Apply
                 </span>
               </div>
 
@@ -309,9 +310,9 @@ export default function MatchPage() {
               </div>
 
               <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "flex-end", gap: 12 }}>
-                <a href="/approval" style={{ padding: "10px 18px", background: "#2563eb", color: "#fff", borderRadius: 8, fontWeight: 600, textDecoration: "none", fontSize: 13 }}>
-                  Proceed to Approval Queue -&gt;
-                </a>
+                <Link href="/career-intelligence" style={{ padding: "10px 18px", background: "#2563eb", color: "#fff", borderRadius: 8, fontWeight: 600, textDecoration: "none", fontSize: 13 }}>
+                  Explore Discovered Jobs -&gt;
+                </Link>
               </div>
             </div>
           )}

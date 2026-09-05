@@ -1,5 +1,5 @@
 """
-Application Tracker Database & Service  HITL & Status Management
+Application Tracker Database & Service — Pipeline & Status Management
 =====================================================================
 Supports local MongoDB storage (`mongodb://localhost:27017/jobsearch_ai`)
 with fallback to JSON database.

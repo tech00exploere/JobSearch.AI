@@ -45,15 +45,6 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/approval",
-    label: "HITL Approval Queue",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    ),
-  },
-  {
     href: "/profile",
     label: "Candidate Profile",
     icon: (
@@ -186,11 +177,11 @@ export function Sidebar() {
         {/* Footer Info */}
         <div className="glass-card" style={{ padding: "10px 12px", borderRadius: 8, background: "rgba(15,23,42,0.6)" }}>
           <div style={{ fontSize: 10, color: "#60a5fa", fontWeight: 600, marginBottom: 2 }}>
-            Safety Enforcement
+            Application Mode
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px rgba(34,197,94,0.6)" }} />
-            <span style={{ fontSize: 11, color: "#94a3b8" }}>HITL Approval Active</span>
+            <span style={{ fontSize: 11, color: "#94a3b8" }}>Candidate-Controlled</span>
           </div>
         </div>
       </div>

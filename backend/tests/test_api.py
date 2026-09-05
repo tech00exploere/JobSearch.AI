@@ -2,7 +2,7 @@
 JobSearch.ai Backend Unit & Integration Test Suite
 ==================================================
 Tests API endpoints, Job Search, Deterministic Matcher, Resume RAG,
-Material Tailoring, HITL Application Approval, and Tracker DB logging.
+Material Tailoring, Application Tracking, and Candidate Execution.
 Run with: backend\.venv\Scripts\python.exe -m pytest backend/tests/ -v
 """
 
@@ -104,7 +104,7 @@ class TestJobSearchAndMatching:
             client.put("/api/resume", json=current_resume)
 
 
-class TestHITLAndApplicationTracker:
+class TestCandidateApplicationTracker:
     def test_prepare_application(self):
         response = client.post("/api/jobs/prepare?job_id=job-101")
         assert response.status_code == 200
@@ -134,7 +134,7 @@ class TestHITLAndApplicationTracker:
             match_score=88,
             matched_skills=["Python"],
             missing_skills=[],
-            summary="Human-controlled HITL test",
+            summary="Candidate-controlled manual apply test",
             cover_letter="Test letter",
             job_url="https://careers.humancontrolledcorp.example.com/jobs/200",
             source="company_career_page"

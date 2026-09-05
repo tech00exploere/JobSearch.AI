@@ -9,7 +9,7 @@ app = FastAPI(
     description=(
         "Backend API for JobSearch.ai — An agentic AI platform that discovers relevant jobs, "
         "analyzes job descriptions, evaluates resume fit, generates tailored non-hallucinated application materials, "
-        "and prepares applications for human-approved submission."
+        "and empowers candidates with tailored materials for direct manual application."
     ),
     version="1.0.0",
     docs_url="/docs",

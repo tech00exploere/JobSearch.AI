@@ -2,7 +2,7 @@
 JobSearch.ai Tool Suite — Dedicated AI Agent Tools
 =================================================
 Exposes authorized tools for Job Discovery, JD Analysis, Resume RAG,
-Deterministic Matching, Material Tailoring, HITL Approval, and Application Tracking.
+Deterministic Matching, Material Tailoring, and Application Tracking.
 """
 
 from typing import Dict, Any, List, Optional
@@ -100,7 +100,7 @@ def tool_generate_cover_letter(job_id: str) -> Dict[str, Any]:
 
 
 def tool_prepare_application(job_id: str) -> Dict[str, Any]:
-    """9. prepare_application: Package application for Human Approval (HITL)"""
+    """9. prepare_application: Package application materials for candidate review"""
     job = job_service.get_job_details(job_id)
     if not job:
         return {"status": "error", "message": f"Job {job_id} not found."}
@@ -132,7 +132,7 @@ def tool_prepare_application(job_id: str) -> Dict[str, Any]:
 
     return {
         "status": "success",
-        "message": "Application prepared. Waiting for Human Approval (HITL).",
+        "message": "Application materials prepared. Ready for candidate review and manual application.",
         "prepared_application": prep_app.model_dump()
     }
 

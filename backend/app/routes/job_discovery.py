@@ -2,10 +2,8 @@ import json
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query, Body
-from app.schemas.discovered_job import NormalizedJob
 from app.job_discovery import orchestrator
 from app.job_discovery.platform_search import generate_platform_links
-from app.job_discovery.url_resolver import resolve_application_url
 from app.services.matching_service import matching_service
 from app.services.tracker_service import tracker_service
 from app.services.llm_service import analyze_job_with_llm

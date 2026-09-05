@@ -15,8 +15,7 @@ Rules:
 - Opening the link does NOT change any application status.
 """
 
-from typing import Optional
-from urllib.parse import urlencode, quote_plus
+from urllib.parse import urlencode
 
 
 PLATFORM_CONFIGS = [

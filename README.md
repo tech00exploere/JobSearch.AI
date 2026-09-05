@@ -54,13 +54,12 @@ Candidate Applies Manually
      ↓
 "I Applied" → APPLIED
 "Didn't Apply" → NOT_APPLIED
+```
+
+## License
 
 MIT — see [LICENSE](LICENSE)
 
 ---
 
-
-
-
-
-*Built with ❤️ for working professionals & students *
+*Built with ❤️ for working professionals & students*

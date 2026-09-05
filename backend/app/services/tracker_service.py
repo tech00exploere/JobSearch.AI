@@ -198,7 +198,7 @@ class TrackerService:
         app["updated_at"] = now_str
         if notes:
             app["notes"] = notes
-            
+
         if submission_channel:
             app["submission_channel"] = submission_channel
         if pdf_resume_version:

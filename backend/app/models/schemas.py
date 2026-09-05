@@ -38,7 +38,6 @@ class ChatResponse(BaseModel):
     status: Literal["mock", "real"] = "real"
 
 
-
 # ─── Job Models ───────────────────────────────────────────────────────────────
 
 class JobListing(BaseModel):

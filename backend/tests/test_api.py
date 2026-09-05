@@ -1,4 +1,4 @@
-"""
+r"""
 JobSearch.ai Backend Unit & Integration Test Suite
 ==================================================
 Tests API endpoints, Job Search, Deterministic Matcher, Resume RAG,
@@ -84,20 +84,20 @@ class TestJobSearchAndMatching:
         # Fetch current
         get_res = client.get("/api/resume", cookies=cookies)
         current_resume = get_res.json()
-        
+
         # Modify temp
         original_name = current_resume["personal_info"]["name"]
         current_resume["personal_info"]["name"] = "Ritesh Kumar Tester"
-        
+
         # Put back
         put_res = client.put("/api/resume", json=current_resume, cookies=cookies)
         assert put_res.status_code == 200
         assert put_res.json()["status"] == "success"
-        
+
         # Verify it changed
         verify_res = client.get("/api/resume", cookies=cookies)
         assert verify_res.json()["personal_info"]["name"] == "Ritesh Kumar Tester"
-        
+
         # Revert
         current_resume["personal_info"]["name"] = original_name
         client.put("/api/resume", json=current_resume, cookies=cookies)
@@ -106,11 +106,11 @@ class TestJobSearchAndMatching:
         cookies = {"jobsearch_session": "test-session-token"}
         mock_file_content = "Name: Ritesh Kumar\nEmail: ritesh.tester@example.com\nRole: Full-Stack Developer\nSkills: Python, React, MongoDB"
         files = {"file": ("resume.txt", mock_file_content, "text/plain")}
-        
+
         # Save current resume
         get_res = client.get("/api/resume", cookies=cookies)
         current_resume = get_res.json()
-        
+
         try:
             response = client.post("/api/resume/upload", files=files, cookies=cookies)
             if response.status_code == 200:

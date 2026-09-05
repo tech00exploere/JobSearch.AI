@@ -6,8 +6,6 @@ and handles session token generation, validation, and user-isolated profiles.
 """
 
 import uuid
-import os
-import json
 from datetime import datetime
 from typing import Dict, Any, Optional
 from bson import ObjectId
@@ -18,8 +16,6 @@ from app.auth.schemas import UserResponse, SessionUser
 SESSIONS: Dict[str, SessionUser] = {}
 USERS_MEMORY: Dict[str, Dict[str, Any]] = {}
 USER_PROFILES_MEMORY: Dict[str, Dict[str, Any]] = {}
-
-DEFAULT_RESUME_PATH = os.path.join(os.path.dirname(__file__), "../data/master_resume.json")
 
 
 def create_empty_candidate_profile(name: str = "", email: str = "") -> Dict[str, Any]:

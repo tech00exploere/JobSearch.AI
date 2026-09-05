@@ -15,7 +15,7 @@ router = APIRouter()
 async def chat(request: ChatRequest) -> ChatResponse:
     """
     Main Agentic Chat Endpoint.
-    
+
     - Accepts user query / job search prompt
     - Triggers JobSearch.ai Agent loop (Job Search, JD Analysis, Deterministic Matcher, Resume RAG, Material Tailoring)
     - Returns structured answer + visual tool badges + tailored materials

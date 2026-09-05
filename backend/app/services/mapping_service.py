@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from app.models.schemas import FormQuestion, FormMappingResponse
+from app.models.schemas import FormQuestion
 
 
 class MappingService:
@@ -7,7 +7,7 @@ class MappingService:
 
     def get_questions_for_channel(self, submission_channel: str, candidate_profile: Dict[str, Any]) -> List[FormQuestion]:
         """
-        Determines the list of questions required for the submission channel 
+        Determines the list of questions required for the submission channel
         and auto-fills them with candidate data where available.
         """
         personal = candidate_profile.get("personal_info") or {}

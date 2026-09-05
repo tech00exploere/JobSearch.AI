@@ -7,12 +7,12 @@ Resume RAG context, and deterministic match scoring.
 
 import os
 import json
-from typing import List, Dict, Any
+import re
+from typing import List
 from dotenv import load_dotenv
 from app.models.schemas import ChatResponse, ToolCallBadge
 from app.tools.job_tools import (
     tool_search_jobs,
-    tool_get_job_details,
     tool_calculate_job_match,
     tool_prepare_application,
     tool_track_application
@@ -205,9 +205,8 @@ def analyze_job_with_llm(description: str, title: str = "") -> dict:
                 f"Job Title: {title}\n\nJob Description:\n{description[:4000]}"
             )
             resp = genai_model.generate_content(prompt)
-            import json as _json
-            text = resp.text.strip().strip('').lstrip('json').strip()
-            return _json.loads(text)
+            text = resp.text.strip().strip('`').lstrip('json').strip()
+            return json.loads(text)
         except Exception as e:
             return {
                 "required_skills": [],
@@ -217,7 +216,6 @@ def analyze_job_with_llm(description: str, title: str = "") -> dict:
                 "summary_reasoning": f"Gemini analysis unavailable: {str(e)}"
             }
 
-    import re
     skills_found = re.findall(
         r"\b(Python|FastAPI|React|Node\.js|TypeScript|JavaScript|Java|Go|Rust|MongoDB|PostgreSQL|MySQL|Redis|Docker|Kubernetes|AWS|GCP|Azure|REST|GraphQL)\b",
         description or "",

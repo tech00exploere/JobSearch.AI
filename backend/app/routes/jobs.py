@@ -14,15 +14,18 @@ from app.models.schemas import (
     JobMatchResult,
     PreparedApplication,
     SubmitApplicationRequest,
-    ApplicationRecord
+    ApplicationRecord,
+    FormMappingResponse,
 )
 from app.services.job_service import job_service
 from app.services.matching_service import matching_service
 from app.services.tracker_service import tracker_service
+from app.services.mapping_service import mapping_service
+from app.services.submission_provider import submission_router
 from app.rag.resume_rag import resume_rag_engine
 from app.services.resume_parser_service import resume_parser_service
 from app.auth.schemas import SessionUser
-from app.auth.dependencies import get_current_user, get_current_user_optional
+from app.auth.dependencies import get_current_user
 from app.auth import service as auth_service
 
 router = APIRouter()
@@ -105,17 +108,12 @@ async def prepare_application(job_id: str = Query(...)) -> PreparedApplication:
     )
 
 
-from app.models.schemas import FormQuestion, FormMappingResponse
-
 @router.get("/applications/{application_id}/form", response_model=FormMappingResponse, summary="Get mapped form questions for an application")
 async def get_application_form(application_id: str) -> FormMappingResponse:
     """Fetch auto-filled and missing application questions for candidate review"""
     app_record = tracker_service.get_application(application_id)
     if not app_record:
         raise HTTPException(status_code=404, detail=f"Application {application_id} not found.")
-
-    from app.services.mapping_service import mapping_service
-    from app.services.submission_provider import submission_router
 
     # Determine url and infer channel
     job_url = app_record.get("job_url", "")
@@ -126,7 +124,7 @@ async def get_application_form(application_id: str) -> FormMappingResponse:
 
     has_email = bool(app_record.get("apply_email", ""))
     provider = submission_router.get_provider_for_url(job_url, has_email=has_email)
-    
+
     # Degradation check
     channel_name = provider.__class__.__name__.replace("Provider", "")
     if provider.is_supported(job_url) and not provider.can_submit(job_url):

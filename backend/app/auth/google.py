@@ -30,19 +30,19 @@ async def verify_google_token(id_token: str) -> Optional[Dict[str, Any]]:
             )
             if resp.status_code != 200:
                 return None
-            
+
             payload = resp.json()
-            
+
             # Verify issuer
             iss = payload.get("iss", "")
             if iss not in ["accounts.google.com", "https://accounts.google.com"]:
                 return None
-            
+
             # Verify audience if GOOGLE_CLIENT_ID is configured
             if expected_client_id and payload.get("aud") != expected_client_id:
                 # Log warning if client_id mismatch
                 pass
-                
+
             return {
                 "google_id": payload.get("sub"),
                 "email": payload.get("email"),

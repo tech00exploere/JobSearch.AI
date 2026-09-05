@@ -30,7 +30,7 @@ class ResumeRAGEngine:
     def _build_chunks(self) -> List[Dict[str, Any]]:
         """Chunks projects, experience, skills, and summary into searchable units"""
         chunks = []
-        
+
         # Summary chunk
         chunks.append({
             "section": "summary",
@@ -91,7 +91,7 @@ class ResumeRAGEngine:
         for chunk in self.chunks:
             chunk_text = (chunk["title"] + " " + chunk["content"] + " " + " ".join(chunk.get("tags", []))).lower()
             chunk_words = re.findall(r"\w+", chunk_text)
-            
+
             # Simple term frequency overlap score
             score = 0.0
             for qw in query_words:

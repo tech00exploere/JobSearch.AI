@@ -37,8 +37,8 @@ export default function AboutPage() {
           <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#e2f0e4" }}>About KrishiLM</h1>
         </div>
         <p style={{ margin: 0, color: "#6b8f72", fontSize: 16, lineHeight: 1.7, maxWidth: 680 }}>
-          KrishiLM is a <strong style={{ color: "#a3d9a5" }}>learning-focused ML/DL project</strong> — 
-          the goal is to build a domain-specific language model for Indian agriculture completely from scratch, 
+          KrishiLM is a <strong style={{ color: "#a3d9a5" }}>learning-focused ML/DL project</strong> —
+          the goal is to build a domain-specific language model for Indian agriculture completely from scratch,
           without relying on any external AI API or pretrained model.
         </p>
       </div>
@@ -51,12 +51,12 @@ export default function AboutPage() {
           </h2>
 
           <p style={{ margin: "0 0 16px", color: "#8aad8e", lineHeight: 1.7 }}>
-            India has over 600 million farmers. Access to reliable, timely agricultural information 
-            in local languages can meaningfully improve crop yield, reduce pesticide overuse, and 
+            India has over 600 million farmers. Access to reliable, timely agricultural information
+            in local languages can meaningfully improve crop yield, reduce pesticide overuse, and
             improve farmers&apos; livelihoods.
           </p>
           <p style={{ margin: 0, color: "#8aad8e", lineHeight: 1.7 }}>
-            KrishiLM aims to be a small, open, specialized model that anyone can run locally — 
+            KrishiLM aims to be a small, open, specialized model that anyone can run locally —
             trained on Indian agriculture knowledge in Hindi and English.
           </p>
         </div>

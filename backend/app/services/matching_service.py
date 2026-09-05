@@ -1,7 +1,7 @@
 import re
 import sys
 import os
-from typing import Dict, Any, List, Optional
+from typing import Any, List, Optional
 from app.models.schemas import ParsedJD, JobMatchResult, TailoredMaterials
 from app.rag.resume_rag import resume_rag_engine
 

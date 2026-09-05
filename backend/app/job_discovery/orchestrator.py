@@ -6,7 +6,6 @@ from app.schemas.discovered_job import (
     RawJob, NormalizedJob, SourceCapability, SourceDiagnostic, DiscoveryDiagnostics
 )
 from app.job_discovery.registry import get_all_active_connectors, create_connector
-from app.job_discovery.connectors.web_search import WebSearchConnector
 from app.job_discovery.normalizer import normalize_job
 from app.job_discovery.deduplicator import deduplicate_jobs
 from app.job_discovery.freshness import sort_by_freshness

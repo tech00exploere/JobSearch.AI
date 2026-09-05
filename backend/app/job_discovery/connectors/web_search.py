@@ -1,4 +1,3 @@
-import httpx
 from typing import List, Dict, Any
 from app.schemas.discovered_job import RawJob
 from app.job_discovery.base import JobSourceConnector

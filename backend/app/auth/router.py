@@ -6,9 +6,8 @@ GET  /api/auth/me     — Hydrate current authenticated session user
 POST /api/auth/logout — Invalidate session and clear cookie
 """
 
-import os
 from fastapi import APIRouter, HTTPException, Response, Request, Depends, status
-from typing import Dict, Any
+from typing import Dict
 from app.auth import google, service
 from app.auth.schemas import GoogleLoginRequest, UserResponse, SessionUser
 from app.auth.dependencies import get_current_user_optional, get_current_user, COOKIE_SESSION_KEY

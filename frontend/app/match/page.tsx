@@ -119,7 +119,7 @@ export default function MatchPage() {
 
       {/* Job Picker Panel */}
       <div style={{ background: "#1e293b", padding: 24, borderRadius: 14, border: "1px solid rgba(255,255,255,0.08)", marginBottom: 28 }}>
-        
+
         {/* Search + Analyse row */}
         <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
           <input

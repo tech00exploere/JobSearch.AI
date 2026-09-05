@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 from app.schemas.discovered_job import RawJob, NormalizedJob
 from app.job_discovery.url_validator import validate_url
 

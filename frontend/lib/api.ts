@@ -369,5 +369,3 @@ export async function logoutUser(): Promise<{ status: string; message: string }>
     method: "POST",
   });
 }
-
-

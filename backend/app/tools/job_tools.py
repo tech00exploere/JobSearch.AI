@@ -5,7 +5,7 @@ Exposes authorized tools for Job Discovery, JD Analysis, Resume RAG,
 Deterministic Matching, Material Tailoring, and Application Tracking.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from app.services.job_service import job_service
 from app.services.matching_service import matching_service
 from app.services.tracker_service import tracker_service

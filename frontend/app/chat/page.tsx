@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useId } from "react";
 import Link from "next/link";
-import { sendChatMessage, type ChatResponse, type ToolCallBadge } from "@/lib/api";
+import { sendChatMessage, checkHealth, type ChatResponse, type ToolCallBadge } from "@/lib/api";
 
 interface Message {
   id: string;
@@ -22,11 +22,10 @@ export default function ChatPage() {
   const uid = useId();
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: `${uid}-welcome`,
+      id: `${uid}-init`,
       role: "assistant",
       content:
-        "**Namaste! I am JobSearch.ai**, your dedicated Job Search & Application Agent.\n\n" +
-        "I discover relevant jobs, analyze job descriptions, calculate deterministic fit scores against your master resume, " +
+        "Hello! I'm **JobSearch.ai**, your autonomous job search agent. I can search live listings across platforms, match job descriptions, analyze skill gaps, " +
         "and generate non-hallucinated tailored materials for your **Candidate-Controlled Applications**.",
     },
   ]);
@@ -38,9 +37,8 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/health")
-      .then((r) => r.ok)
-      .then(setBackendOk)
+    checkHealth()
+      .then((r) => setBackendOk(r?.status === "ok"))
       .catch(() => setBackendOk(false));
   }, []);
 

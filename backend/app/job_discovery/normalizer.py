@@ -1,5 +1,5 @@
 import hashlib
-from typing import List, Optional
+from typing import Optional
 from app.schemas.discovered_job import RawJob, NormalizedJob
 from app.job_discovery.url_validator import validate_url
 from app.job_discovery.url_resolver import resolve_application_url
